@@ -1,5 +1,8 @@
 Revision history for Perl extension LaBrea::Tarpit::Report
 
+1.11  Tue Oct 21 12:18:00 PDT 2003
+	aarrggggg....  typo in version 1.10 bug fix
+
 1.10  Tue Oct 21 11:56:25 PDT 2003
 	fixed bug in Report.pm that caused html_report.plx pop up whois to
 	fail. Reported by Mike Brown brownm1970@despammed.com

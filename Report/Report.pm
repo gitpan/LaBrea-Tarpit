@@ -19,7 +19,7 @@ use vars qw(
 	@std_images
 	);
 
-$VERSION = do { my @r = (q$Revision: 1.10 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.11 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use AutoLoader 'AUTOLOAD';
 
@@ -557,9 +557,9 @@ color="#ff0000">RED</b></font> the more recently they've sent a WIN probe</font>
 sub _geek2whois {
   my($formname) = @_;
 # whois form names
-  (my $g1 = $geek1) =~ s/whois/whoisg/g;
-  (my $g2 = $geek2) =~ s/whois/whoisg/g;
-  (my $g3 = $geek3) =~ s/whois/whoisg/g;
+  (my $g1 = $geek1) =~ s/whois/$formname/g;
+  (my $g2 = $geek2) =~ s/whois/$formname/g;
+  (my $g3 = $geek3) =~ s/whois/$formname/g;
   return($g1,$g2,$g3);
 }
 

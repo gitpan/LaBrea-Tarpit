@@ -1,7 +1,7 @@
 
-VERSION = 04012801
+VERSION = 04030801
 
-  Last Updated 1-28-04 michael@bizsystems.com
+  Last Updated 3-8-04 michael@bizsystems.com
 
 This is a list of other sites that are running LaBrea::Tarpit
 It is used to collect stats from the web sites listed in the 
@@ -41,4 +41,4 @@ http://osiris.etee2k.net/cgi-bin/tarpit/html_report.plx	Ed Truitt <ed.truitt@ete
 #http://www.dmrf.net/cgi-bin/guests.cgi		dlinux@dmrf.net
 http://www.pettingers.net/cgi-bin/paged_report.cgi Charlie Pettinger <web1@pettingers.net>
 http://pooh.topnz.ac.nz/LaBrea-Tarpit/paged_report.plx Sartorelli, Kevin <Kevin.Sartorelli@openpolytechnic.ac.nz>
-http://tarpit.assinck.info:82/cgi-bin/paged_report.cgi Henrie Assinck <henrie@assinck.nl>
+http://tarpit.assinck.info:82/cgi-bin/paged_report.cgi Henrie Assinck <henrie@assinck.info>

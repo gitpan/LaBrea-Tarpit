@@ -6,8 +6,9 @@ use strict;
 
 use vars qw($VERSION @ISA @EXPORT_OK *deliver2_DShield);
 use Fcntl qw(:DEFAULT :flock);
+use Net::Netmask;
 
-$VERSION = do { my @r = (q$Revision: 0.07 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 0.08 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 require Exporter;
 @ISA = qw(Exporter);
@@ -61,6 +62,9 @@ add leading ./ to DShield file path if needed.
     'Reply-To'	=> 'john.doe@foo.com',	# optional
   # optional
     'Obfuscate'	=> 'complete or partial',
+  # optional - ignore reports about this netblock
+  #	when generating DShield reports
+    'SrcIgnore'	=> ['10.11.12.0/23','10.11.16.0/23'],
   # either one or more working SMTP server's
     'smtp'	=> 'iceman.dshield.org,mail.euclidian.com',
   # or a sendmail compatible mail transport command
@@ -178,6 +182,9 @@ as a B<Que's> file in preparation for mailing.
 UserID, From, To, [Reply-To], and Subject are added to the file and it is
 renamed qF_unique_string.
 
+No queue file is generated if the list of connections are empty.
+This could happen when using the SrcIgnore option.
+
   input:	\%config,$debug
   output:	false on success or no action
 		true = error message
@@ -218,6 +225,17 @@ sub move2_Q {
 	close LOCK;
 	return "failed to open $f for read"
   }
+
+  my @SrcIgnoreBlocks = ();
+  if ($cfg->{SrcIgnore}) {
+      my($blockstr,$block);
+      for $blockstr (@{$cfg->{SrcIgnore}}) {
+	  return "failed to allocate Net::Netmask"
+		unless $block = new Net::Netmask($blockstr);
+	  push(@SrcIgnoreBlocks, $block);
+      }
+  }
+
 # now format the Q file output
   print OUT qq|From: $cfg->{From}
 To: $cfg->{To}
@@ -227,11 +245,13 @@ X-mailer: LaBrea-DShield $VERSION
 
   $tmp = 1;	# line count, flag
   my $ver = '';
+  my $entries = 0;
 
+DSLINE:
   while(my $in = <IN>) {
-#					   $1        $2                $3                                $4      $5
-#                    date     time         tza       tzb            version   count   src       sp     1stQuad  dest      dp proto flags
-    unless ($in =~ /[^\s]+\s+[^\s]+\s+([\+\-0-9]+):([0-9]+)\s+UserID([^\s]+)\s+\d+\s+[^\s]+\s+[^\s]+\s+(\d+)\.([^\s]+)\s+[^\s]+\s+\w+\s+\w+/) {
+#					   $1        $2                $3              $4                  $5      $6
+#                    date     time         tza       tzb            version   count   src         sp     1stQuad  dest      dp proto flags
+    unless ($in =~ /[^\s]+\s+[^\s]+\s+([\+\-0-9]+):([0-9]+)\s+UserID([^\s]+)\s+\d+\s+([^\s]+)\s+[^\s]+\s+(\d+)\.([^\s]+)\s+[^\s]+\s+\w+\s+\w+/) {
       chop $in;
       close OUT;
       close IN;
@@ -243,21 +263,29 @@ X-mailer: LaBrea-DShield $VERSION
       $ver = $3;		# nope, mark and print
       print OUT "Subject: FORMAT DSHIELD USERID $cfg->{UserID} TZ $1:$2 LaBrea_Tarpit_DShield ${ver}:$VERSION\n\n";
     }
+    foreach my $block (@SrcIgnoreBlocks) {
+	next DSLINE if $block->match($4);
+    }
     if (exists $cfg->{Obfuscate}) {
-      my $dest = $4 .'.'.$5;
+      my $dest = $5 .'.'.$6;
       my $rplc = ($cfg->{Obfuscate} =~ /complete/i)
 	? '10.0.0.1'		# complete
-	: '10.' . $5;		# partial
+	: '10.' . $6;		# partial
       $in =~ s/$dest/$rplc/;
     }
 # insert DShield ID
     $in =~ s/UserID${ver}/$cfg->{UserID}/;
     print OUT $in;
+    $entries++;
   }
   close OUT;
   close IN;
-  rename ${f}.'.q.tmp', $dir . 'qF'. time .'.'. $$ .'.'. 0
+  if ($entries) { # Only send mail if matching entries were found.
+    rename ${f}.'.q.tmp', $dir . 'qF'. time .'.'. $$ .'.'. 0
 	unless $debug && $debug > 1;
+  } else {
+    unlink ${f}.'.q.tmp' unless $debug && $debug > 1;
+  }
 
   $debug = ($debug || unlink $f) ? 0
 	: "cannot unlink $f: Operation not permitted";
@@ -458,7 +486,7 @@ __END__
 
 =head1 COPYRIGHT
 
-Copyright 2002, Michael Robinton & BizSystems
+Copyright 2002, 2004 Michael Robinton & BizSystems
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or   

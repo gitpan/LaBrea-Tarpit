@@ -1,7 +1,8 @@
 
 Not much to do to get this to work. 
 
-Copy "mail_dshield.pl" into a suitable directory.
+Copy one of the "mail_dshield.pl" scripts
+into a suitable directory.
 
 Configure EITHER smtp or a sendmail equivalent.
 

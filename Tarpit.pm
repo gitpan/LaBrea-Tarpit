@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit;
 #
-# 3-28-04, michael@bizsystems.com
+# 7-6-04, michael@bizsystems.com
 #
 BEGIN { $SIG{'__WARN__'} = sub { warn $_[0] if $DOWARN }}
 $__PACKAGE__::DOWARN = 1;
@@ -9,7 +9,7 @@ use strict;
 #use diagnostics;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = do { my @r = (q$Revision: 1.27 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.29 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use Fcntl qw(:DEFAULT :flock);
 use AutoLoader 'AUTOLOAD';
@@ -1599,6 +1599,7 @@ sub find_old_threads {
 =head1 DEPENDENCIES
 
         Net::Whois::IP version 0.35     
+	Net::Netmask version 1.8 or higher
         LaBrea version 2.4b3 or higher
 
 See the INSTALL document for complete information

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report::localTrojans;
 #
-# version 1.18, updated 2-18-04, never complete :-)
+# version 1.20, updated 5-21-04, never complete :-)
 #
 # find a port by number, try tcp then udp
 #
@@ -43,6 +43,7 @@ $trojans = {
   5193	=> 'Aol Instant Messenger',
   5433	=> 'postgreSQL, Stunnel',
   5490	=> 'LNVALARM Access',
+  5554	=> 'Sasser Worm',
   6346	=> 'Gnutella',
   6588	=> 'AnalogX Proxy Server',
   6660	=> 'IRC Chat',
@@ -72,10 +73,13 @@ $trojans = {
 # http://www.robertgraham.com/pubs/firewall-seen.html
   555	=> 'phAse zero',
   1243	=> 'Sub-7',
+  2745	=> 'Bagle backdoor',
   3129	=> 'Masters Paradise',
+  4755	=> 'Bagle-V backdoor',
   6670  => 'Deep Throat',
   6711	=> 'Sub-7',
   6969	=> 'GateCrasher',
+  9898	=> 'Dabber Virus backdoor',
   21544	=> 'GirlFriend',
   12345	=> 'NetBus',
   23456	=> 'EvilFTP',
@@ -84,6 +88,7 @@ $trojans = {
   31789	=> "Hack'aTack",
   31337	=> 'BackOrifice',
   50505	=> 'Sockets de Troie',
+  65506	=> 'myDoom proxy',
 };
 
 

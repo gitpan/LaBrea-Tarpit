@@ -1,5 +1,14 @@
 Revision history for Perl extension LaBrea::Tarpit
 
+1.29  Tue Jul  6 16:47:36 PDT 2004
+	Add patch to not send empty DShield messages that might get  
+	created when sending to multiple destinations. 
+	Petter Reinholdtsen <pere@hungry.com>
+
+1.28  Tue Jul  6 09:57:45 PDT 2004 --  NOT RELEASED
+	Add patch to DShield 0.08, courtesy of Petter Reinholdtsen <pere@hungry.com>
+	to allow delivery of DShield reports to multiple destinations
+
 1.27	Sun Mar 28 11:16:35 PST 2004
 	revert to previous 1.24 behavior on not writing out cache file
 	kept some code clean up.

@@ -24,6 +24,8 @@ my $config = {
 	'To'		=> 'reports@dshield.org',
 	'From'		=> 'john.doe@foo.com',
 #	'Reply-To'	=> 'johns-work@foo.com',		# optional
+#	'Obfuscate'	=> 'complete or partial',		# optional
+#	'SrcIgnore'	=> ['10.11.12.0/23', '10.11.16.0/23'],	# optional
 
 # either one or more working SMTP server's, your's or their's
 #	'smtp'		=> 'iceman.dshield.org,mail.euclidian.com',

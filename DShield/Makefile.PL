@@ -10,6 +10,9 @@ my $pod        = $_[$#_] . '.3';
 WriteMakefile(
    'NAME'         => $name,
    'VERSION_FROM' => $src,		# finds $VERSION
+   'PREREQ_PM'    => {
+			'Net::Netmask' => '1.8',
+		},
    'PM'           => {$src	=> '$(INST_LIBDIR)/' .$src},
    'dist'         => {COMPRESS	=> 'gzip', SUFFIX => 'gz'}
 );

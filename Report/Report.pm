@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report;
 #
-# 7-31-02, michael@bizsystems.com
+# 9-18-02, michael@bizsystems.com
 #
 use strict;
 #use diagnostics;
@@ -19,7 +19,7 @@ use vars qw(
 	$images_checked
 	);
 
-$VERSION = do { my @r = (q$Revision: 1.02 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.03 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use AutoLoader 'AUTOLOAD';
 

@@ -43,7 +43,7 @@ sub next_sec {
   $now;
 }
 
-local(*TLOCK,*TEST);
+local(*TLOCK,*TF,*TEST);
 my $src = 'tmp/test.src';
 my $cache = 'tmp/test.cache';
 
@@ -64,10 +64,10 @@ print "did not create $cache.tmp\nnot "
 ## put some stuff in test file
 my $startime = &next_sec(time);
 print "failed to open $src\nnot "
-  unless open(TEST,'>'.$src);
+  unless open(TF,'>'.$src);
 &ok;
-print TEST "$startime\n";
-close TEST;
+print TF "$startime\n";
+close TF;
 
 ## test 5
 # test for actual update
@@ -80,9 +80,9 @@ print "expected time $now\nne response $_\nnot "
 ## test 6
 ## check actual file contents
 print "failed to open $cache\nnot "
-  unless open(TEST,$cache);
-$_ = <TEST>;
-close TEST;
+  unless open(TF,$cache);
+$_ = <TF>;
+close TF;
 print "contents $cache = $_ expected $startime\n\nnot "
   unless $_ eq "$startime\n";
 &ok;
@@ -90,23 +90,29 @@ print "contents $cache = $_ expected $startime\n\nnot "
 ## test 7
 ## check that blocking works
 print "failed to open shared $cache\nnot "
-  unless share_open(*TLOCK,*TEST,$cache.'.tmp');
+  unless share_open(*TLOCK,*TF,$cache.'.tmp');
 &ok;
 
 &next_sec($now);
 
+if (open(TEST,'-|')) {
+  print (<TEST>);
+} else {
 ## test 8
 ## does block
-my @save_fail = daemon2_cache($cache,$src,0,2);	# alarm timeout = 2
-print "failed to block\nnot "
-  unless $@ =~ /remote connect timeout/;
-&ok;
+  my @save_fail = daemon2_cache($cache,$src,0,2);	# alarm timeout = 2
+  print "failed to block\nnot "
+    unless $@ =~ /remote connect timeout/;
+  &ok;
+  print 'returned |', @save_fail, "| on failure\nnot "
+    if @save_fail;
+  &ok;
+  exit;
+}
+close TEST;
+close_file(*TLOCK,*TF);
 
-close_file(*TLOCK,*TEST);
-
-print 'returned |', @save_fail, "| on failure\nnot "
-  if @save_fail;
-&ok;
+$test += 2;
 
 ## test 10
 # test again for actual update

@@ -7,7 +7,7 @@ use strict;
 use vars qw($VERSION @ISA @EXPORT_OK *deliver2_DShield);
 use Fcntl qw(:DEFAULT :flock);
 
-$VERSION = do { my @r = (q$Revision: 0.06 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 0.07 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 require Exporter;
 @ISA = qw(Exporter);

@@ -1,5 +1,11 @@
 Revision history for Perl extension LaBrea::Tarpit::Util
 
+0.06  Thu Sep 19 08:09:51 PDT 2002
+	No module code changes.
+	Change 'daemon2_cache', 'lockf.t'
+	to accomodate implementations of perl's 'flock' 
+	that use 'fcntl'
+
 0.05  Tue May 21 20:51:10 PDT 2002
 	move 'their_date' to Tarpit.pm
 

@@ -140,18 +140,26 @@ print "accepted directory as read file\nnot "
 ## 5 file locking
 &create_cache($in,$ds);
 $config->{DShield} = $ds;
-local *L;
+local (*L,*TEST);
 sysopen L, $ds . '.flock', O_RDWR|O_CREAT|O_TRUNC;
 flock(L,LOCK_EX);
-eval {
-  alarm 2;
-  move2_Q($config,2);
-};
-alarm 0;
- print "faulty lock\nnot "
+
+if (open(TEST,'-|')) {
+  print (<TEST>);
+} else {
+  eval {
+    alarm 2;
+    move2_Q($config,2);
+  };
+  alarm 0;
+  print "faulty lock\nnot "
 	unless $@ =~ /test timeout/;
+  &ok;
+  exit;
+}
 close L;  
-&ok;
+close TEST;
+++$test;
 
 ## 6 creat real output
 $_ = move2_Q($config,2);

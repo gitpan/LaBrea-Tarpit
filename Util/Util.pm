@@ -9,7 +9,7 @@ use vars qw($VERSION @ISA @EXPORT_OK);
 use AutoLoader 'AUTOLOAD';
 use Fcntl qw(:DEFAULT :flock);
 
-$VERSION = do { my @r = (q$Revision: 0.05 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 0.06 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 require Exporter;
 

@@ -1,10 +1,8 @@
 Revision history for Perl extension LaBrea::Tarpit::Report
 
-1.02a Fri Aug  2 14:56:20 PDT 2002
+1.03 Fri Aug  2 14:56:20 PDT 2002
 	added "please wait" capability to "other sites"
 	in examples/paged_report.plx
-	since there were no functional changes to the modules,
-	no new release has been made.
 
 1.02  Wed Jul 31 17:07:11 PDT 2002
 	added "please wait" message to paged_report.plx

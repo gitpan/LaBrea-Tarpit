@@ -1,5 +1,8 @@
 Revision history for Perl extension LaBrea::Tarpit
 
+1.23  Wed Oct 29 09:20:48 PST 2003
+	update html_report and paged_report to list the sourceforge site for the labrea daemon
+
 1.22  Tue Oct 21 12:18:00 PDT 2003
 	fixed typo in 1.21 :-((
 

@@ -2,7 +2,7 @@
 #
 # paged_report.plx
 #
-my $version = '1.13';	# 9-30-03, michael@bizsystems.com
+my $version = '1.14';	# 10-29-03, michael@bizsystems.com
 # GPL'd, see Copyright notice in the package README file
 #
 use strict;
@@ -215,7 +215,9 @@ Tom Liston's LaBrea scanner/worm disruptor. For more
 information on LaBrea see: <a href="http://www.hackbusters.net/">www.hackbusters.net</a>
 <p>
 To download these scripts see:<br>
-&nbsp;&nbsp;<a href="http://search.cpan.org/search?query=LaBrea::Tarpit&mode=all">CPAN.org</a></font></td>
+&nbsp;&nbsp;<a href="http://search.cpan.org/search?query=LaBrea::Tarpit&mode=all">CPAN.org</a><br>
+To download Tom Liston's <b>labrea daemon</b> see:<br>
+&nbsp;&nbsp;<a href="http://sourceforge.net/projects/labrea/">sourceforge.net/labrea/</a></font></td>
 <td valign=top>
 | . $out->{capture_summary} . q|</td></tr>
 <tr><td colspan=2  bgcolor="| . $look_n_feel->{bakgnd} . q|"><font face="| . 

@@ -2,7 +2,7 @@
 #
 # web_scan.pl
 #
-# version 1.10, 5-21-02, michael@bizsystems.com
+# version 1.11, 11-6-04, michael@bizsystems.com
 # GPL'd, see Copyright notice in the package README file
 #
 
@@ -164,6 +164,7 @@ foreach (<IN>) {
 
 while (1) {
   last unless reap_kids(\%kids);	# terminate when all kids are done
+  sleep 1;
 }
 
 rename $out, $real_out;

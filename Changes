@@ -1,5 +1,10 @@
 Revision history for Perl extension LaBrea::Tarpit
 
+1.31  Sat Nov  6 12:39:13 PST 2004
+	Get: v1.05
+	add 'sleep' to Get/examples/web_scan.pl to eliminate excess 
+	processor utilization while waiting to reap kids
+
 1.30  Thu Sep  2 12:14:52 PDT 2004
 	update Report/examples/whois.plx to show PTR lookup for IP's
 

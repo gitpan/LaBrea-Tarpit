@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report::localTrojans;
 #
-# version 1.20, updated 5-21-04, never complete :-)
+# version 1.21, updated 9-11-04, never complete :-)
 #
 # find a port by number, try tcp then udp
 #
@@ -27,14 +27,24 @@ $trojans = {
   1182	=> 'Sobig.a (BigBoss) virus',
   1214	=> 'Kazaa',
   1257	=> 'Frenzy - Frenzy2000',
+  1555	=> 'Sobig.e - RTSP Streaming Media Proxy',
   1745	=> 'Qhosts aka (aolfix.exe) trojan',
   1998	=> 'cisco X.25 service',
+  2001	=> 'Sobig.e - Remote Control Service',
   2002	=> 'TransScout',
   2003	=> 'TransScout',
   2004	=> 'TransScout',
   2005	=> 'TransScout',
+  2280	=> 'Sobig.e - SOCKS Proxy server',
+  2281	=> 'Sobig.e - Telnet Proxy server',
+  2282	=> 'Sobig.e - WWW Proxy server',
+  2283	=> 'Sobig.e - FTP Proxy server',
+  2284	=> 'Sobig.e - POP3 Proxy server',
+  2285	=> 'Sobig.e - SMTP Server',
   3127	=> 'MyDoom_A',
   3128	=> 'MyDoom',
+  3382	=> 'fujitsu-neat',
+  3643	=> 'AudioJuggler',
   4480	=> 'proxy-plus',
   4489	=> 'Brown Orifice??',
   5190	=> 'Aol Instant Messenger',
@@ -96,7 +106,7 @@ my $builder = sub {
   my($port,@trjs) = @_;
   my $line = '';
   foreach(0..$#trjs) {
-    $trjs[$_] =~ s/\s+(.+)/$1/;
+    $trjs[$_] =~ s/\s+([\..]+)/$1/;
     while ($trjs[$_] =~ /\s$/) { chop $trjs[$_] };
     if (length($trjs[$_]) + length($line) > 25) {
       if ($line) {
@@ -1230,6 +1240,17 @@ port 65432 The Traitor (= th3tr41t0r)
 port 65432 (UDP) - The Traitor (= th3tr41t0r)
 port 65530 Windows Mite
 port 65535 RC1 trojan
+|.
+# add Sobig f varients from http://www.lurhq.com/Sobig-f.html
+q
+|port 2555 Sobig.f RTSP Streaming Media Proxy
+port 3001 Sobig.f Remote Control Service
+port 3380 Sobig.f SOCKS Proxy server
+port 3381 Sobig.f Telnet Proxy server
+port 3382 Sobig.f WWW Proxy server
+port 3383 Sobig.f FTP Proxy server
+port 3384 Sobig.f POP3 Proxy server
+port 3385 Sobig.f SMTP Server
 |);
 
 foreach(@_) {

@@ -1,5 +1,9 @@
 Revision history for Perl extension LaBrea::Tarpit::Get
 
+1.05  Sat Nov  6 12:39:13 PST 2004
+	add 'sleep' to examples/web_scan.pl to eliminate excess processor 
+	utilization while waiting to reap kids
+
 0.04  Thu May 16 17:30:09 PDT 2002
 	moved Socket function 'open_tcp'
 	to LaBrea::Tarpit::NetIO

@@ -1,5 +1,12 @@
 Revision history for Perl extension LaBrea::Tarpit::Report
 
+1.04 Tue Oct  8 08:21:21 PDT 2002
+	removed "image" checking from Report::port_stats.
+	this resolves a bug between file system paths
+	and web-server paths that is dependent on server configuration.
+	Thanks to Andrew Findlay <andrew.findlay@skills-1st.co.uk>
+	for spotting the problem.
+
 1.03 Fri Aug  2 14:56:20 PDT 2002
 	added "please wait" capability to "other sites"
 	in examples/paged_report.plx

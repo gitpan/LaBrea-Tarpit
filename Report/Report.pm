@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report;
 #
-# 9-18-02, michael@bizsystems.com
+# 10-8-02, michael@bizsystems.com
 #
 use strict;
 #use diagnostics;
@@ -16,10 +16,9 @@ use vars qw(
 	$h_ex_font_clr
 	$TCP
 	@std_images
-	$images_checked
 	);
 
-$VERSION = do { my @r = (q$Revision: 1.03 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.04 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use AutoLoader 'AUTOLOAD';
 
@@ -1198,20 +1197,21 @@ sub port_stats {
   return undef unless exists
 	$out->{port_intervals} &&
 	$out->{port_intervals};		# non zero
-  unless ( $images_checked ) {		# mod perl remembers
-    $images_checked = 1;
-    my $err = '';
-    if ( $lnf->{images} ) {
-      foreach(0..$#std_images) {
-        $_ = $lnf->{images} . $std_images[$_];
-        $err .= $_ . "<br>\n" unless -e $_;
-      }
-    } else {
-      $err = 'image directory';
-    }
-    return ($out->{port_intervals} = "LaBrea::Tarpit::Report, can't find<br>\n$err")
-	if $err;
-  }
+
+#  unless ( $images_checked ) {		# mod perl remembers
+#    $images_checked = 1;
+#    my $err = '';
+#    if ( $lnf->{images} ) {
+#      foreach(0..$#std_images) {
+#        $_ = $lnf->{images} . $std_images[$_];
+#        $err .= $_ . "<br>\n" unless -e $_;
+#      }
+#    } else {
+#      $err = 'image directory';
+#    }
+#    return ($out->{port_intervals} = "LaBrea::Tarpit::Report, can't find<br>\n$err")
+#	if $err;
+#  }
 
   my $pintvl = $out->{port_intervals};
   &init_lnf($lnf);			# insert default font stuff if needed

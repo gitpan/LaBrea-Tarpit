@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report::localTrojans;
 #
-# version 1.09, updated 9-11-02, never complete :-)
+# version 1.10, updated 9-30-02, never complete :-)
 #
 # find a port by number, try tcp then udp
 #
@@ -24,6 +24,7 @@ $trojans = {
 # some well known ports not always in 'services'
   1115	=> 'ardus-trns',
   1214	=> 'Kazaa',
+  5433	=> 'postgreSQL, Stunnel',
   6346	=> 'Gnutella',
   6660	=> 'IRC Chat',
   6661	=> 'IRC Chat',

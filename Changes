@@ -1,5 +1,13 @@
 Revision history for Perl extension LaBrea::Tarpit
 
+1.10  Tue Oct  8 16:01:51 PDT 2002
+	Type in 1.09 Report.pm corrected
+
+1.09  Tue Oct  8 08:21:21 PDT 2002
+	Updated Report v1.04
+	removed "image" checking from Report::port_stats.
+	see Report::Changes
+
 1.08  Thu Sep 19 08:09:51 PDT 2002
 	NO MODULE CODE CHANGES in 1.08 or 1.07
 	Changes to various test modules to accomodate perl

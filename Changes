@@ -1,5 +1,8 @@
 Revision history for Perl extension LaBrea::Tarpit
 
+1.20  Fri Oct 10 17:48:23 PDT 2003
+	modify function 'daemon' to remove its PID file on exit
+
 1.19  Tue Sep 30 09:11:50 PDT 2003
       Update sub module Report.pm 1.09 and paged_report.plx
       no changes to Tarpit.pm

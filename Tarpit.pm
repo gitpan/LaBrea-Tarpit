@@ -9,7 +9,7 @@ use strict;
 #use diagnostics;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = do { my @r = (q$Revision: 1.19 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.20 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use Fcntl qw(:DEFAULT :flock);
 use AutoLoader 'AUTOLOAD';
@@ -686,6 +686,7 @@ $__PACKAGE__::DOWARN = 1;
       foreach $kid ( keys %kids ) {
 	kill 15, $kid;				# kill remaining children
       }
+      unlink $pid_file;
       exit 0;
     }
     exit 1 unless open(PID,'>'.$pid_file);

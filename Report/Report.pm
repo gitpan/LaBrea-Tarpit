@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report;
 #
-# 9-30-03, michael@bizsystems.com
+# 10-21-03, michael@bizsystems.com
 #
 use strict;
 #use diagnostics;
@@ -19,7 +19,7 @@ use vars qw(
 	@std_images
 	);
 
-$VERSION = do { my @r = (q$Revision: 1.09 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.10 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use AutoLoader 'AUTOLOAD';
 
@@ -554,6 +554,15 @@ color="#ff0000">RED</b></font> the more recently they've sent a WIN probe</font>
 
 =cut
 
+sub _geek2whois {
+  my($formname) = @_;
+# whois form names
+  (my $g1 = $geek1) =~ s/whois/whoisg/g;
+  (my $g2 = $geek2) =~ s/whois/whoisg/g;
+  (my $g3 = $geek3) =~ s/whois/whoisg/g;
+  return($g1,$g2,$g3);
+}
+
 ########
 ######## generate threads by IP with GEEKS hot link
 ########
@@ -567,7 +576,9 @@ sub guests_by_IP {
     my $col = 0;                # left or right column
 
 # whois name
-  my $whois = $lnf->{whois} || 'whois';
+    my $whois = $lnf->{whois} || 'whois';
+# whois form names
+    my($g1,$g2,$g3) = _geek2whois('whoisg');
 # get page extension
     scriptname() =~ /\.([a-zA-Z_-]+)/;
     my $ext = $1;
@@ -580,7 +591,7 @@ sub guests_by_IP {
     $tdcfg->{size} = 2;
     my $font = &tdcfg_font($tdcfg);
     $out->{guests_by_IP} = q|<!-- GUESTS BY IP -->
-<a name="GUESTS BY IP"></a><form name=whois action="|. $whois .'.'. $ext .q|" method=GET target=pop_whois>
+<a name="GUESTS BY IP"></a><form name=whoisg action="|. $whois .'.'. $ext .q|" method=GET target=pop_whois>
 <input type=hidden name=query value="">
 <table cellspacing=1 cellpadding=2 border=2>
 <tr align=center><td colspan=6
@@ -612,9 +623,9 @@ make_jsPOP_win('pop_whois') .q|</td></tr>
     foreach(0..$#{$report->{th_srcIP}}) {
       delete $tdcfg->{align};
       $out->{guests_by_IP} .= '<tr>' unless $col;
-      $out->{guests_by_IP} .= &txt2td($tdcfg,$geek1 . 
-	$report->{th_srcIP}->[$_] . $geek2 .
-	$report->{th_srcIP}->[$_] . $geek3 .
+      $out->{guests_by_IP} .= &txt2td($tdcfg,$g1 . 
+	$report->{th_srcIP}->[$_] . $g2 .
+	$report->{th_srcIP}->[$_] . $g3 .
 	$report->{th_srcIP}->[$_] . '</a>');
       $tdcfg->{align} = 'center';
       $out->{guests_by_IP} .= &txt2td($tdcfg,$report->{th_numTH}->[$_]);
@@ -722,6 +733,9 @@ sub got_away {
 # whois name
     my $whois = $lnf->{whois} || 'whois';
 
+# whois geeks
+    my($g1,$g2,$g3) = _geek2whois('whoisa');
+
 # get page extension
     scriptname() =~ /\.([a-zA-Z_-]+)/;
     my $ext = $1;
@@ -736,7 +750,7 @@ sub got_away {
     $_ = q|<tr><td colspan=4 border=0 bgcolor="|. $tdcfg->{td_clr} . q|">&nbsp;|;
 
     $out->{got_away} = q|<!-- GOT AWAY -->
-<a name="GOT AWAY"></a><form name=whois action="|. $whois .'.'. $ext .q|" method=GET target=pop_whois>
+<a name="GOT AWAY"></a><form name=whoisa action="|. $whois .'.'. $ext .q|" method=GET target=pop_whois>
 <input type=hidden name=query value="">
 <table cellspacing=1 cellpadding=2 border=2>
 | . $_ . q|These IP addresses have scanned our IP block recently but are no longer probing.</td></tr>
@@ -764,9 +778,9 @@ make_jsPOP_win('pop_whois') .q|</td></tr>
     foreach(0..$#{$report->{sc_srcIP}}) {
       $out->{got_away} .= '<tr>' unless $col;
       $tdcfg->{td_clr} = ($report->{sc_prst}->[$_] == $TCP) ? '#cc0000' : '#009900';
-      $out->{got_away} .= &txt2td($tdcfg,$geek1 . 
-	$report->{sc_srcIP}->[$_] . $geek2 . 
-	$report->{sc_srcIP}->[$_] . $geek3 .
+      $out->{got_away} .= &txt2td($tdcfg,$g1 . 
+	$report->{sc_srcIP}->[$_] . $g2 . 
+	$report->{sc_srcIP}->[$_] . $g3 .
 	$report->{sc_srcIP}->[$_] . '</a>'.' -> '. $report->{sc_dPORT}->[$_]);
       $out->{got_away} .= &txt2td($tdcfg,time2local($report->{sc_last}->[$_], $report->{tz}));  
       $col = !$col;
@@ -1213,7 +1227,7 @@ sub make_jsPOP_win {
 
   my $html = q|
 <script language=javascript1.1>
-function popwin(query) {
+function popwin() {
   |. $name .q| = window.open ( "","|. $name .q|",
 "toolbar=no,menubar=no,location=no,scrollbars=yes,status=yes,resizable=yes," +
   "width=|. $width .q|,height=|. $height .q|");

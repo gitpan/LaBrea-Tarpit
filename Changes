@@ -1,5 +1,8 @@
 Revision history for Perl extension LaBrea::Tarpit
 
+1.11  Mon Jan 20 16:28:21 PST 2003
+	corrected error in calculating midnight epoch in Tarpit.pm
+
 1.10  Tue Oct  8 16:01:51 PDT 2002
 	Type in 1.09 Report.pm corrected
 

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit;
 #
-# 10-8-02, michael@bizsystems.com
+# 1-20-03, michael@bizsystems.com
 #
 BEGIN { $SIG{'__WARN__'} = sub { warn $_[0] if $DOWARN }}
 $__PACKAGE__::DOWARN = 1;
@@ -9,7 +9,7 @@ use strict;
 #use diagnostics;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = do { my @r = (q$Revision: 1.10 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.11 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use Fcntl qw(:DEFAULT :flock);
 use AutoLoader 'AUTOLOAD';
@@ -677,7 +677,11 @@ sub midnight {
   my ($et,$tz) = @_;
   $tz = &timezone($et) unless $tz;
   my $mn= $et - tz2_sec($tz) - ($et%86400);
-#  $mn -= 86400 if $tz < 0;# DUH! I DON'T THINK SO...
+  if ($mn > $et) {
+    $mn -= 86400;
+  } elsif ($et - $mn >= 86400) {
+  $mn += 86400;
+  }
   $mn;
 }
 

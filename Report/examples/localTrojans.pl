@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report::localTrojans;
 #
-# version 1.10, updated 9-30-02, never complete :-)
+# version 1.11, updated 1-8-03, never complete :-)
 #
 # find a port by number, try tcp then udp
 #
@@ -26,6 +26,7 @@ $trojans = {
   1214	=> 'Kazaa',
   5433	=> 'postgreSQL, Stunnel',
   6346	=> 'Gnutella',
+  6588	=> 'AnalogX Proxy Server',
   6660	=> 'IRC Chat',
   6661	=> 'IRC Chat',
   6662	=> 'IRC Chat',
@@ -65,6 +66,12 @@ $trojans = {
 4899 Radmin, JDeveloperPro
 6129 Dameware
 9666 RabbIT2
+9273 trojan Wingate 3.0
+9274 trojan Wingate 3.0
+9275 trojan Wingate 3.0
+9276 trojan Wingate 3.0
+9277 trojan Wingate 3.0
+9278 trojan Wingate 3.0
 #
 # this URL has links to many descriptions of hacks and ports that are
 # not listed on it's port list page which are included below.

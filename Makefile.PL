@@ -5,10 +5,10 @@ use ExtUtils::MakeMaker;
 do 'IANA/build_codes.pl';
 
 WriteMakefile(
-   'NAME'         => 'LaBrea::Tarpit',
+   'NAME'	  => 'LaBrea::Tarpit',
    'VERSION_FROM' => 'Tarpit.pm',		# finds $VERSION
-   'PM'           => {	'Tarpit.pm'	=> '$(INST_LIBDIR)/Tarpit.pm',
+   'PM'	   => {	'Tarpit.pm'	=> '$(INST_LIBDIR)/Tarpit.pm',
 			'Codes.pm'	=> '$(INST_LIBDIR)/Codes.pm',
 			'NetIO.pm'	=> '$(INST_LIBDIR)/NetIO.pm'},
-   'dist'         => {COMPRESS		=> 'gzip', SUFFIX => 'gz'}
+   'dist'	  => {COMPRESS		=> 'gzip', SUFFIX => 'gz'}
 );

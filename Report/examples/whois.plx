@@ -2,13 +2,19 @@
 #
 # whois.plx
 #
-my $version = '1.04';	# 8-12-03, michael@bizsystems.com
+my $version = '1.05';	# 9-5-04, michael@bizsystems.com
 # GPL'd, see Copyright notice in the package README file
 #
 use strict;
 #use diagnostics;
+use Net::DNS::ToolKit::Utilities qw(
+	rlook_send
+	rlook_rcv 
+);
 
-# fix upt the whois routine to get the stuff we want
+my $ptr_timeout = 15;	# PTR record lookup timeout in seconds
+
+# fix up the whois routine to get the stuff we want
 BEGIN {
   use vars qw($old_d_q $lastresp);
   use Net::Whois::IP qw(whoisip_query);
@@ -40,7 +46,9 @@ my $html = q|<html>
 onMouseout="status='';return true;"
 onClick="self.close();return false;">&gt;&gt;Close Window&lt;&lt;</a>
 </font></td></tr>
-<tr><td align=center>|. $IP .q|
+<tr><td align=center>|. $IP;
+
+my $body = q|
 <form action="|. $action .q|" method=GET>
 <input type=text name=query><p>
 <input type=submit value="Whois >>"></td></tr>
@@ -48,7 +56,7 @@ onClick="self.close();return false;">&gt;&gt;Close Window&lt;&lt;</a>
 
 if ($IP) {
   if ($ENV{HTTP_REFERER} !~ /$ENV{SERVER_NAME}/i) {
-    $html .= qq|
+    $body .= qq|
 Due to the excessive load placed on our system, we have disabled the ability
 for third party sites to query the Whois Proxy through the web
 interface. Please enter your request manually.
@@ -56,20 +64,29 @@ interface. Please enter your request manually.
 |;
   }
   else {
+    my $socket = rlook_send($IP,$ptr_timeout);
     $lastresp = '';
+
     eval {whoisip_query($IP)};
+
+    my $hostname = rlook_rcv($socket,$ptr_timeout);
+    if ($hostname) {
+      $html .= "&nbsp;--&nbsp;$hostname";
+    }
     
     if ($lastresp && ! $@) {
-      $html .= q|<pre>
-|. join('',@$lastresp) . q|
+      $body .= q|<pre>|. join('',@$lastresp) . q|
 </pre>
 |;
     } else {
-     $html .= 'could not connect to whois server, try again later';
+     $body .= q|<pre>
+could not connect to whois server, try again later
+</pre>
+|;
     }
   }
 }
-$html .= q|
+$html .= $body . q|
 </td></tr>
 <tr><td><font size="-1">
 <a href="#top" onMouseover="status='Close Window';return true" onMouseout="status='';return true;"

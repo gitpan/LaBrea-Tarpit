@@ -1,5 +1,8 @@
 Revision history for Perl extension LaBrea::Tarpit::Report
 
+1.13  Thu Sep  2 12:14:52 PDT 2004
+	update whois.plx to show PTR lookup for IP's
+
 1.12  Sat Mar 27 15:58:39 PST 2004
 	update paged_report.plx to clear tarpit hash so the garbage
 	collector can recover the memory. No changes to Report.pm

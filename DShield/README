@@ -32,6 +32,9 @@ DESCRIPTION - LaBrea::Tarpit::DShield
             'Reply-To'  => 'john.doe@foo.com',  # optional
           # optional
             'Obfuscate' => 'complete or partial',
+          # optional - ignore reports about this netblock
+          #     when generating DShield reports
+            'SrcIgnore' => ['10.11.12.0/23','10.11.16.0/23'],
           # either one or more working SMTP server's
             'smtp'      => 'iceman.dshield.org,mail.euclidian.com',
           # or a sendmail compatible mail transport command
@@ -58,6 +61,9 @@ DESCRIPTION - LaBrea::Tarpit::DShield
 
         UserID, From, To, [Reply-To], and Subject are added to the file and
         it is renamed qF_unique_string.
+
+        No queue file is generated if the list of connections are empty.
+        This could happen when using the SrcIgnore option.
 
           input:        \%config,$debug
           output:       false on success or no action
@@ -102,11 +108,11 @@ EXPORT_OK
                 move2_Q
 
 COPYRIGHT
-        Copyright 2002, Michael Robinton & BizSystems This program is free
-        software; you can redistribute it and/or modify it under the terms
-        of the GNU General Public License as published by the Free Software
-        Foundation; either version 2 of the License, or (at your option) any
-        later version.
+        Copyright 2002, 2004 Michael Robinton & BizSystems This program is
+        free software; you can redistribute it and/or modify it under the
+        terms of the GNU General Public License as published by the Free
+        Software Foundation; either version 2 of the License, or (at your
+        option) any later version.
 
         This program is distributed in the hope that it will be useful, but
         WITHOUT ANY WARRANTY; without even the implied warranty of

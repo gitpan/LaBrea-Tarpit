@@ -27,7 +27,7 @@ SYNOPSIS
 
       $rv = process_log(\%tarpit,path2log_file,is_daemon,port_intvls);
 
-            cull_threads(\%tarpit,timeout,scanners,port_intvls,DShield);
+      $rv = cull_threads(\%tarpit,timeout,scanners,port_intvls,DShield);
 
       $rv = write_cache_file(\%tarpit,path2cache_file,umask,flag);
 
@@ -338,7 +338,7 @@ DESCRIPTION - LaBrea::Tarpit
 
       Returns true on success, false if file fails to open
 
-    * cull_threads(\%tarpit,timeout,scanners,port_intvls,DShield);
+    * $rv=cull_threads(\%tarpit,timeout,scanners,port_intvls,DShield);
       Cull aged threads from memory cache. Default time is 600 seconds (10
       min). On startup, no culls are done for the cull time interval to
       retain old capture time information for any lingering black hats that
@@ -350,9 +350,11 @@ DESCRIPTION - LaBrea::Tarpit
 
       appends DShield info to file specified in DShield if present
 
+        returns:      true if threads removed, else false
+
     * $rv = write_cache_file(\%tarpit,path2cache_file,umask,flag);
        Write memory cache to file.
-       returns true on success, false if file fails to open.
+       returns cache text on success, false if file fails to open.
 
               umask defaults to 033 if not supplied
 
@@ -364,11 +366,6 @@ DESCRIPTION - LaBrea::Tarpit
 
        flag   = true,  append 'daemon' to version
        flag   = false, append 'static' to version
-
-    * wrt_cache2_handle(\%tarpit,*HANDLE,$fork);
-      DEPRECATED ! removed
-
-      Write memory cache to open handle, see write_cache_file above.
 
     * prep_report(\%tarpit,\%hash);
        Prepare arrays of report values from the tarpit memory cache.
@@ -444,6 +441,7 @@ DESCRIPTION - LaBrea::Tarpit
 
 DEPENDENCIES
             Net::Whois::IP version 0.35     
+            Net::Netmask version 1.8 or higher
             LaBrea version 2.4b3 or higher
 
     See the INSTALL document for complete information
@@ -469,11 +467,11 @@ EXPORT_OK
             array2_tarpit
 
 COPYRIGHT
-    Copyright 2002, 2003, Michael Robinton & BizSystems This program is free
-    software; you can redistribute it and/or modify it under the terms of
-    the GNU General Public License as published by the Free Software
-    Foundation; either version 2 of the License, or (at your option) any
-    later version.
+    Copyright 2002, 2003, 2004, Michael Robinton & BizSystems This program
+    is free software; you can redistribute it and/or modify it under the
+    terms of the GNU General Public License as published by the Free
+    Software Foundation; either version 2 of the License, or (at your
+    option) any later version.
 
     This program is distributed in the hope that it will be useful, but
     WITHOUT ANY WARRANTY; without even the implied warranty of

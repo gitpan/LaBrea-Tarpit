@@ -1,5 +1,8 @@
 Revision history for Perl extension LaBrea::Tarpit
 
+1.30  Thu Sep  2 12:14:52 PDT 2004
+	update Report/examples/whois.plx to show PTR lookup for IP's
+
 1.29  Tue Jul  6 16:47:36 PDT 2004
 	Add patch to not send empty DShield messages that might get  
 	created when sending to multiple destinations. 

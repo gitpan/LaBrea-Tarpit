@@ -11,6 +11,7 @@ WriteMakefile(
    'NAME'         => $name,
    'VERSION_FROM' => $src,		# finds $VERSION
    'PM'           => {$src	=> '$(INST_LIBDIR)/' .$src},
-   'PREREQ_PM'    => {'Net::Whois::IP'	=> '0.35'},
+   'PREREQ_PM'    => {'Net::Whois::IP'	=> '0.35',
+		      'Net::DNS::ToolKit' => '0.20'},
    'dist'         => {COMPRESS	=> 'gzip', SUFFIX => 'gz'}
 );

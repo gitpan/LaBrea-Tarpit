@@ -7,6 +7,7 @@ Installation:
 
 	What you need:
 
+	Net::Whois::IP version 0.35
 	LaBrea version 2.4b3 or higher
 	LaBrea::Tarpit	distribution
 	  LaBrea/examples/daemon.pl
@@ -14,6 +15,7 @@ Installation:
 	  LaBrea/DShield/examples/mail_dshield.pl
 	  LaBrea/Get/examples/web_scan.pl
 	  LaBrea/Report/examples/LocalTrojans.pl
+	  LaBrea/Report/examples/whois.plx
 	  LaBrea/Report/examples/html_report.plx
 	    or
 	  Labrea/Report/examples/paged_report.plx
@@ -21,7 +23,8 @@ Installation:
 Where do they go, who owns them:
 
   root	daemon.pl, tell_me.pl, mail_dshield.pl
-  web	xxx_report.plx LocalTrojans web_scan.pl
+  web	xxx_report.plx LocalTrojans.pl
+	web_scan.pl whois.plx
 
 	daemon.pl   ->	startup rc files
 		make sure you shutdown with 
@@ -34,8 +37,14 @@ Where do they go, who owns them:
 	xxx_report  -> web cgi script
 		put images and LocalTrojans.pl
 		where the report can find them
+	whois.plx   -> web cgi script
+		put in the same directory
+		as xxx_report
 
 Get, build and install:
+
+	Net::Whois::IP version 0.35
+	from cpan.org
 
 	LaBrea version 2.4b3 or higher 
 	from www.hackbusters.net
@@ -78,6 +87,10 @@ Configuring 'html_report' or paged_report
 
 	paged_report.xxx and html_report.xxx will not run as they
 	are presently configured without this change.
+
+	If you have mod_perl installed, you can run the report
+	whois scripts as-is, otherwise rename the 'xxx' portion 
+	'cgi'.
 
 	make a subdirectory 'tmp' with permissions writable
 	by the webserver for the report page cache.

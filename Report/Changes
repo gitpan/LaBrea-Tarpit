@@ -1,5 +1,9 @@
 Revision history for Perl extension LaBrea::Tarpit::Report
 
+1.12  Wed Aug  6 14:23:44 PDT 2003
+	Report.pm updated to eliminate use of Geek Tools
+	add page 'whois.plx'
+
 1.04 Tue Oct  8 08:21:21 PDT 2002
 	removed "image" checking from Report::port_stats.
 	this resolves a bug between file system paths

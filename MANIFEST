@@ -65,6 +65,7 @@ Report/Report.pm
 Report/examples/README
 Report/examples/html_report.plx
 Report/examples/paged_report.plx
+Report/examples/whois.plx
 Report/examples/localTrojans.pl
 Report/examples/cleardot.gif
 Report/examples/bludot.gif

@@ -5,6 +5,7 @@ README
 Report.pm
 examples/README
 examples/html_report.plx
+examples/whois.plx
 examples/paged_report.plx
 examples/localTrojans.pl
 examples/cleardot.gif

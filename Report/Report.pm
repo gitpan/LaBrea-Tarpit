@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report;
 #
-# 10-8-02, michael@bizsystems.com
+# 8-6-03, michael@bizsystems.com
 #
 use strict;
 #use diagnostics;
@@ -18,7 +18,7 @@ use vars qw(
 	@std_images
 	);
 
-$VERSION = do { my @r = (q$Revision: 1.04 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.05 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use AutoLoader 'AUTOLOAD';
 
@@ -58,13 +58,14 @@ require Exporter;
 	other_sites
 	make_buttons
 	get_config
+	make_jsPOP_win
 );
 
 # package variables
 
 # address of GEEKS whois lookup
-  $geek1 = '<a href="http://www.geektools.com/cgi-bin/proxy.cgi?query=';
-  $geek2 = '&targetnic=auto" target=new>';
+  $geek1 = q|<a href="#top" onClick="popwin();whois.query.value='|;
+  $geek2 = q|';whois.submit();return false" onMouseOver="status='';return true;">|;
 
 # colors
   $hard_font_clr	= '#ffffcc';	# hard captured font color
@@ -121,6 +122,8 @@ sub make_buttons;
 sub other_sites;
 sub make_image_cache;
 sub get_config;
+sub make_jsPOP_win;
+sub scriptname;
 sub DESTROY {};
 
 1;
@@ -149,8 +152,9 @@ LaBrea::Tarpit::Report
   $html=make_buttons(\%look_n_feel,$url,$active,\@buttons,$xtra);
   $html=make_port_graph($port,\%look_n_feel,$max,\@counts);
   $html=make_image_cache($pre,@images);
+  $html=make_jsPOP_win($name,$width,$height);
 
-B<utility subroutines>
+B<utility subroutines> (not exported)
 
   $hex = age2hex($age,$scale_factor);
   $td_string=txt2td(\%config_hash,string);
@@ -161,6 +165,7 @@ B<utility subroutines>
   $color=pcolor($number);
   @scaled_array=scale_array($sf,@array);
   $max=max(@array);
+  $scriptname=scriptname();
 
 =head1 DESCRIPTION - LaBrea::Tarpit::Report
 
@@ -180,7 +185,7 @@ this module.
 
 =over 2
 
-=item generate($input,\%look_n_feel,\%output)
+=item * generate($input,\%look_n_feel,\%output)
 
   Returns false on success, error message $@ on failure.
   Likely cause of failure is dameon not running
@@ -352,7 +357,7 @@ sub generate {
   0;
 } # end generate
 
-=item gen_short(($input,\%output);
+=item * gen_short(($input,\%output);
 B<sub gen_short> takes similar arguments as B<generate>, however the
 B<%output> array may be (usually is) empty. It will insert the minimum
 information required in B<%output> prior to a call to B<short_report>.
@@ -381,7 +386,7 @@ sub gen_short {
   0;
 } # end gen_short
 
-=item syslog2_cache($input,\%config);
+=item * syslog2_cache($input,\%config);
 
   Returns true, false on failure. Likely cause of 
   failure is a missing input log file or missing
@@ -425,7 +430,7 @@ sub syslog2_cache {
   return write_cache_file(\%tarpit,$cache_file,$umask,0);
 }
 
-=item guests(\%report,\%look_n_feel,\%output);
+=item * guests(\%report,\%look_n_feel,\%output);
 
   	    html table
 
@@ -531,7 +536,7 @@ color="#ff0000">RED</b></font> the more recently they've sent a WIN probe</font>
 1; # returns true
 } ## end guests report
 
-=item guests_by_IP(\%report,\%look_n_feel,\%output);
+=item * guests_by_IP(\%report,\%look_n_feel,\%output);
 
   	     html table
 
@@ -556,6 +561,10 @@ sub guests_by_IP {
     return undef unless exists $out->{guests_by_IP};
     my $col = 0;                # left or right column
 
+# get page extension
+    scriptname() =~ /\.([a-zA-Z_-]+)/;
+    my $ext = $1;
+
 # headers first
 
     &init_lnf($lnf);		# insert default font stuff if needed
@@ -564,7 +573,8 @@ sub guests_by_IP {
     $tdcfg->{size} = 2;
     my $font = &tdcfg_font($tdcfg);
     $out->{guests_by_IP} = q|<!-- GUESTS BY IP -->
-<a name="GUESTS BY IP"></a>
+<a name="GUESTS BY IP"></a><form name=whois action="whois.|. $ext .q|" method=GET target=whois>
+<input type=hidden name=query value="">
 <table cellspacing=1 cellpadding=2 border=2>
 <tr align=center><td colspan=6
 bgcolor="|. $tdcfg->{td_clr} . q
@@ -573,8 +583,9 @@ $report->{threads} . q
 |</font> total threads captured, from these <font size=+1>| . $report->{total_IPs} . q
 |</font> IP addresses</b></font></td></tr>
 <tr align=center><td colspan=6
-bgcolor="|. $tdcfg->{td_clr} . q
-|"><|. $font . q|>&nbsp;<b><i>Click on an IP for WHOIS information from GeekTools</i></b></font></td></tr>
+bgcolor="|. $tdcfg->{td_clr} .q
+|"><|. $font .q|<b><i>Click on an IP for WHOIS information</i></b></font>|.
+make_jsPOP_win('whois') .q|</td></tr>
 |;
 
     $tdcfg->{size} = 3;
@@ -609,13 +620,13 @@ bgcolor="|. $tdcfg->{td_clr} . q
        $out->{guests_by_IP} .= &txt2td($tdcfg,'&nbsp;') . &txt2td($tdcfg,'&nbsp;');
       }
     }
-    $out->{guests_by_IP} .= q|</tr></table>
+    $out->{guests_by_IP} .= q|</tr></table></form>
 <!-- END GUESTS BY IP -->
 |;
 1;
 } # end guests_by_IP report
 
-=item capture_summary(\%report,\%look_n_feel,\%output);
+=item * capture_summary(\%report,\%look_n_feel,\%output);
 
   	html table
 
@@ -674,7 +685,7 @@ bgcolor="|. $tdcfg->{td_clr} . q
 1;
 } # end capture_summary report
 
-=item got_away(\%report,\%look_n_feel,\%output);
+=item * got_away(\%report,\%look_n_feel,\%output);
 
   	    html table
 
@@ -699,6 +710,11 @@ bgcolor="|. $tdcfg->{td_clr} . q
 sub got_away {
     my ($report,$lnf,$out) = @_;
     return undef unless exists $out->{got_away};
+
+# get page extension
+    scriptname() =~ /\.([a-zA-Z_-]+)/;
+    my $ext = $1;
+
     my $tdcfg = {};
     &init_lnf($lnf);		# insert default font stuff if needed
     &init_tdcfg($lnf,$tdcfg);
@@ -709,7 +725,8 @@ sub got_away {
     $_ = q|<tr><td colspan=4 border=0 bgcolor="|. $tdcfg->{td_clr} . q|">&nbsp;|;
 
     $out->{got_away} = q|<!-- GOT AWAY -->
-<a name="GOT AWAY"></a>
+<a name="GOT AWAY"></a><form name=whois action="whois.|. $ext .q|" method=GET target=whois>
+<input type=hidden name=query value="">
 <table cellspacing=1 cellpadding=2 border=2>
 | . $_ . q|These IP addresses have scanned our IP block recently but are no longer probing.</td></tr>
 | . $_ . ($report->{sc_capt}) . q
@@ -718,7 +735,8 @@ sub got_away {
 | IP addresses in: <font size=+1 color="#00aa00"><b>GREEN</b></font> briefly scanned our IP block and escaped.</font>
 </td></tr>
 <tr align=center><td colspan=4 bgcolor="|. $tdcfg->{td_clr} . q|"><|. $font . q
-|>&nbsp;<b><i>Click on an IP for WHOIS information from GeekTools</i></b></font></td></tr>
+|>&nbsp;<b><i>Click on an IP for WHOIS information</i></b></font>|.
+make_jsPOP_win('whois') .q|</td></tr>
 |;
 
     $out->{got_away} .= '<tr>' . 
@@ -744,13 +762,13 @@ sub got_away {
     }
     $tdcfg->{td_clr} = $lnf->{bakgnd};
     $out->{got_away} .= &txt2td($tdcfg,'&nbsp;') . &txt2td($tdcfg,'&nbsp;') . "</tr>\n" if $col;
-    $out->{got_away} .= q|</table>
+    $out->{got_away} .= q|</table></form>
 <!-- END GOT AWAY -->
 |;
 1;
 } # end got_away report
 
-=item my_IPs(\%report,\%look_n_feel,\%output);
+=item * my_IPs(\%report,\%look_n_feel,\%output);
 
   input: \%report,	pointer to report
 	 \%look_n_feel,	pointer to look and feel	
@@ -956,7 +974,7 @@ sub my_IPs {
 1;
 } # end my_IPs report
 
-=item $html=get_versions($report,\%look_n_feel,\%output);
+=item * $html=get_versions($report,\%look_n_feel,\%output);
 
   Return html table of versions numbers, no border
 
@@ -1007,7 +1025,7 @@ Util</font></td>
 1;
 }
 
-=item other_sites(undef,\%look_n_feel,\%output);
+=item * other_sites(undef,\%look_n_feel,\%output);
 
 Generate a synopsis report of activity at
 all sites using LaBrea::Tarpit that issue
@@ -1120,7 +1138,7 @@ sub other_sites {
 }
 
 
-=item $html=make_image_cache($pre,@images);
+=item * $html=make_image_cache($pre,@images);
 
 Generate javascript code to cache a list of images
 
@@ -1159,7 +1177,43 @@ for (var i = 0; i < | . @images . q|; i++) {
   $html .= qq|</script>\n|;
 }
 
-=item port_stats(\%report,\%look_n_feel,\%output);
+=item * $html=make_jsPOP_win($name,$width,$height);
+
+This function makes the javascript code to generate a pop-up window. The
+function name created is 'popwin', the name and size
+are arguments to the function call.
+
+  input:	window name,
+		width [optional - 500 def]
+		height [optional - 400 def]
+  returns:	html text
+
+The javascript function returns 'false'.
+
+=cut
+
+sub make_jsPOP_win {
+  my($name,$width,$height) = @_;
+  $width = 500 unless $width;
+  $height = 400 unless $height;
+
+  my $html = q|
+<script language=javascript1.1>
+function popwin(query) {
+  |. $name .q| = window.open ( "","|. $name .q|",
+"toolbar=no,menubar=no,location=no,scrollbars=yes,status=yes,resizable=yes," +
+  "width=|. $width .q|,height=|. $height .q|");
+  |. $name .q|.document.open();
+  |. $name .q|.document.writeln('<html><body bgcolor="#ffffcc"></body></html>');
+  |. $name .q|.document.close();
+  |. $name .q|.focus();
+  return false;
+}
+</script>
+|;
+}
+
+=item * port_stats(\%report,\%look_n_feel,\%output);
 
   generate html port statistics tables sorted by decending
   port activity then ascending port numbers of the form:
@@ -1361,7 +1415,7 @@ value and color coded for frequency</font></td></tr>
 1;
 } # end of port_stats
 
-=item short_report(\$report,\%out);
+=item * short_report(\$report,\%out);
 
 Generate summary text of the form:
 
@@ -1400,7 +1454,7 @@ sub short_report {
   1;
 }
 
-=item $html=make_port_graph($port,\%look_n_feel,$max,\@counts);
+=item * $html=make_port_graph($port,\%look_n_feel,$max,\@counts);
 
 Return html table graph of @counts values
 scaled, colored per look_n_feel for B<port>
@@ -1461,7 +1515,7 @@ sub make_port_graph {
 |;
 }
 
-=item $html=make_buttons(\%look_n_feel,$url,$active,\@buttons,$xtra);
+=item * $html=make_buttons(\%look_n_feel,$url,$active,\@buttons,$xtra);
 
   Return the html text for a button bar
 
@@ -1545,7 +1599,7 @@ sub make_buttons {
   $butbar .= "</table>\n";
 }
 
-=item $rv = get_config(\%hash,\%look_n_feel) {
+=item * $rv = get_config(\%hash,\%look_n_feel) {
 
 Retrieves and stores the config information about the remote B<daemon> process.
 The resulting config file is used by B<my_IPs>.
@@ -1590,7 +1644,7 @@ sub get_config {
 ############# NON-EXPORT UTILITIES ##############
 #################################################
 
-=item $hex=age2hex($age,$scale_factor);
+=item * $hex=age2hex($age,$scale_factor);
 
 B<html utility>
 
@@ -1621,7 +1675,7 @@ sub age2hex {
   return sprintf("%02X",$t);
 }
 
-=item $td_string=txt2td(\%config_hash,string);
+=item * $td_string=txt2td(\%config_hash,string);
 
 B<html utility>
 
@@ -1663,7 +1717,7 @@ sub txt2td {
   return "<td $tclr $algn>${font}${txt}${nfont}</td>";
 }
 
-=item $time_string=time2local($epoch_time,$tz);
+=item * $time_string=time2local($epoch_time,$tz);
 
 B<html utility>
 
@@ -1686,7 +1740,7 @@ sub time2local {
   }
 }
 
-=item $port_text=get_portname($port,\%trojan_list)
+=item * $port_text=get_portname($port,\%trojan_list)
 
 B<html utility>
 
@@ -1720,7 +1774,7 @@ sub get_portname {
   return $name;
 }
 
-=item $port_text=Getservbyport($port,$proto);
+=item * $port_text=Getservbyport($port,$proto);
 
 B<html utility>
 
@@ -1748,7 +1802,7 @@ sub Getservbyport {
   return undef;
 }  
 
-=item $image_html=element($ht,$w,$alt,$img);
+=item * $image_html=element($ht,$w,$alt,$img);
 
 B<html utility>
 
@@ -1768,7 +1822,7 @@ sub element {
 height=$h>|;
 }
 
-=item $color=pcolor($number);
+=item * $color=pcolor($number);
 
 B<html utility>
 
@@ -1794,7 +1848,7 @@ sub pcolor {
   return 'mag';
 }
 
-=item @scaled_array=scale_array($sf,@array);
+=item * @scaled_array=scale_array($sf,@array);
 
 B<html utility>
 
@@ -1822,14 +1876,12 @@ sub scale_array {
   return @ary;
 }
 
-=item $max=max(@array);
+=item * $max=max(@array);
 
 B<html utility>
 
   return the maximum numeric value from 
   an array but not less than 1
-
-=back
 
 =cut
 
@@ -1839,6 +1891,21 @@ sub max {
     $n = $_ if $n < $_;
   }
   return $n;
+}
+
+=item * $scriptname = scriptname();
+
+B<html utility>
+
+Returns the scriptname of the caller from ENV{SCRIPT_NAME}
+
+=back
+
+=cut
+
+sub scriptname {
+  $ENV{SCRIPT_NAME} =~ /([a-zA-Z_-]+\.[a-zA-Z_-]+)/;
+  return $1;
 }
 
 #### helper routines
@@ -1955,6 +2022,7 @@ sub range_ipv4 {
 	make_buttons
 	make_image_cache
 	make_port_graph
+	make_jsPOP_win
 	my_IPs
 	other_sites
 	port_stats
@@ -1965,7 +2033,7 @@ sub range_ipv4 {
 
 =head1 COPYRIGHT
 
-Copyright 2002, Michael Robinton & BizSystems
+Copyright 2002, 2003, Michael Robinton & BizSystems
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or 

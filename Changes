@@ -1,5 +1,9 @@
 Revision history for Perl extension LaBrea::Tarpit
 
+1.12  Wed Aug  6 14:23:44 PDT 2003
+	Report.pm updated to eliminate use of Geek Tools
+	add page 'whois.plx'
+
 1.11  Mon Jan 20 16:28:21 PST 2003
 	corrected error in calculating midnight epoch in Tarpit.pm
 

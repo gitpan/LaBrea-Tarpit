@@ -1,9 +1,9 @@
 
-paged_report.plx and html_report.plx are set up to operate 
-correctly in either the mod_perl environment or as a 'cgi' file. 
-To use with 'cgi' simply rename them to:
+paged_report.plx, html_report.plx, and whois.plx are set up to 
+operate  correctly in either the mod_perl environment or as a 
+'cgi' file. To use with 'cgi' simply rename them to:
 
-html_report.cgi or paged_report.cgi
+html_report.cgi or paged_report.cgi or whois.cgi
 
 INSTALLATION
 To use, copy the contents of the 'examples' directory

@@ -9,6 +9,11 @@ Installation:
 
 	Net::Whois::IP version 0.35
 	LaBrea version 2.4b3 or higher
+	  LaBrea2_4b3.tgz is included with this distribution (works well)
+	  for labrea version 2.5-stable-1, apply the patch
+	  in the 'labrea_patches' directory to adjust
+	  bandwidth reporting for bytes/second
+
 	LaBrea::Tarpit	distribution
 	  LaBrea/examples/daemon.pl
 	  LaBrea/examples/tell_me.pl

@@ -5,11 +5,13 @@ INSTALL
 MANIFEST
 README
 UPGRADING
+LaBrea2_4b3.tgz
 NetIO.pm
 Tarpit.pm
 labrea_date.log
 labrea_syslog.log
 labrea_time.log
+labrea_patches/labrea-2.5-stable-1.diff
 tz_test_adj.pl
 contrib/README
 contrib/patch-2.3.diff

@@ -10,12 +10,10 @@ use strict;
 
 # fix upt the whois routine to get the stuff we want
 BEGIN {
-  use vars qw($old_d_q);
+  use vars qw($old_d_q $lastresp);
   use Net::Whois::IP qw(whoisip_query);
   $old_d_q = \&Net::Whois::IP::_do_query;
 }
-
-my $lastresp = undef;
 
 sub Net::Whois::IP::_do_query {
   my @rv = &$old_d_q(@_);
@@ -60,6 +58,7 @@ interface. Please enter your request manually.
 |;
   }
   else {
+    $lastresp = '';
     whoisip_query($IP);
     if ($lastresp) {
     $html .= q|<pre>

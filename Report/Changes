@@ -1,6 +1,10 @@
 Revision history for Perl extension LaBrea::Tarpit::Report
 
+1.07  Tue Sep  9 13:51:56 PDT 2003
+	additional enhancements for SpamCannibal Support
+
 1.06  Tue Aug 12 10:23:24 PDT 2003
+	changes to get_versions to support alternate daemon names
 	cosmetic changes to Report::capture_summary
 	cosmetic changes to paged_report.plx
 

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report;
 #
-# 8-12-03, michael@bizsystems.com
+# 9-5-03, michael@bizsystems.com
 #
 use strict;
 #use diagnostics;
@@ -18,7 +18,7 @@ use vars qw(
 	@std_images
 	);
 
-$VERSION = do { my @r = (q$Revision: 1.06 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.07 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use AutoLoader 'AUTOLOAD';
 
@@ -131,7 +131,7 @@ __END__
 
 =head1 NAME
 
-LaBrea::Tarpit::Report
+LaBrea::Tarpit::Report - tarpit log analysis and report
 
 =head1 SYNOPSIS
 
@@ -146,7 +146,7 @@ LaBrea::Tarpit::Report
   got_away(\%report,\%look_n_feel,\%output);
   my_IPs(\%report,\%look_n_feel,\%output);
   get_config(\%hash,\%look_n_feel);
-  get_versions($report,\%look_n_feel,\%output);
+  get_versions($report,\%look_n_feel,\%output,$dname);
   port_stats(\%report,\%look_n_feel,\%output);
   short_report(\$report,\%out);
   $html=make_buttons(\%look_n_feel,$url,$active,\@buttons,$xtra);
@@ -246,7 +246,7 @@ key->value pair exists, otherwise it's skipped.
 =cut
 
 sub generate {
-  my ($input,$lnf,$out) = @_;
+  my ($input,$lnf,$out,$dname) = @_;
   return "LaBrea::Tarpit::xxx_report: missing cache file"
 	unless exists $lnf->{html_cache_file} &&
 		$lnf->{html_cache_file} =~ m|(.*/)| &&
@@ -345,7 +345,7 @@ sub generate {
   
   &my_IPs($report,$lnf,$out);			# make report for our IP block
   &port_stats($report,$lnf,$out);		# make port activity report
-  &get_versions($report,$lnf,$out);		# make versions report
+  &get_versions($report,$lnf,$out,$dname);	# make versions report
   &other_sites($report,$lnf,$out);		# make other site report
 
   $out->{tz}		= $report->{tz};	# insert values for short report
@@ -358,6 +358,7 @@ sub generate {
 } # end generate
 
 =item * gen_short(($input,\%output);
+
 B<sub gen_short> takes similar arguments as B<generate>, however the
 B<%output> array may be (usually is) empty. It will insert the minimum
 information required in B<%output> prior to a call to B<short_report>.
@@ -974,16 +975,17 @@ sub my_IPs {
 1;
 } # end my_IPs report
 
-=item * $html=get_versions($report,\%look_n_feel,\%output);
+=item * $html=get_versions($report,\%look_n_feel,\%output,$dname);
 
   Return html table of versions numbers, no border
 
        $header
-  LaBrea	nn.nn
+  $dname	nn.nn
   Tarpit	nn.nn
   Report	nn.nn
   Util		nn.nn
 
+  $dname defaults to 'LaBrea' if false
   fills:        %output{versions} with html table
   returns:	true on success
 
@@ -999,8 +1001,9 @@ sub my_IPs {
 #
 #
 sub get_versions {
-  my ($p,$lnf,$out) = @_;
+  my ($p,$lnf,$out,$dname) = @_;
   return undef unless exists $out->{versions};
+  $dname = 'LaBrea' unless $dname;
   my $comment = $out->{versions} || '&nbsp;';
   &init_lnf($lnf);		# insert default font stuff if needed
   my $font = &lnf_font($lnf,3);
@@ -1010,7 +1013,7 @@ sub get_versions {
 <tr><td align=center bgcolor=| . $lnf->{bakgnd} .
   qq|><tr><td colspan=3 align=center><${font}>${comment}</font></td></tr>
 <tr>
-<td  bgcolor=| . $lnf->{bakgnd} . qq|><${font}>LaBrea<br>
+<td  bgcolor=| . $lnf->{bakgnd} . qq|><${font}>$dname<br>
 Tarpit<br>
 Report<br>
 Util</font></td>

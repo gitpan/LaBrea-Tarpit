@@ -9,7 +9,7 @@ use strict;
 #use diagnostics;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = do { my @r = (q$Revision: 1.15 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.17 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use Fcntl qw(:DEFAULT :flock);
 use AutoLoader 'AUTOLOAD';
@@ -46,7 +46,7 @@ use constant mon => {
 
 =head1 NAME
 
-  LaBrea::Tarpit : Utilities and web displays for 
+  LaBrea::Tarpit - Utilities and web displays for 
   Tom Liston's LaBrea scanner/worm disruptor
 
   See: http://www.hackbusters.net
@@ -237,7 +237,7 @@ no longer supported as there were problems maintaining separate sessions.
 
 =over 2
 
-=item recurse_hash2txt(\$txt_buffer,\%hash,$keys_so_far,flag)
+=item * recurse_hash2txt(\$txt_buffer,\%hash,$keys_so_far,flag)
 
  Appends to txt_buffer.
 
@@ -271,6 +271,63 @@ sub recurse_hash2txt {
   }
 }
 
+=item * ($LBfh,$version,$kid) = lbd_open($LaBrea,$DEBUG);
+
+Core daemon start routine. Not exported, but can
+be replaced externally with:
+
+  *LaBrea::Tarpit::lbd_open = sub { stuff };
+
+Returns the pid of the underlying process (if any) and the version number of
+that process. It also sets the command line shown by 'ps' like this:
+
+  $0 = 'stuff';
+
+  input:	path to daemon,
+		STDERR switch
+  returns:	LaBrea file handle,
+		version,
+		pid of kid
+
+=cut
+
+sub lbd_open {
+  my($LaBrea,$DEBUG) = @_;
+  local *LABREA;
+  $LaBrea =~ /^([^\s]+)/;		# bare path to LaBrea
+  qx/$1 -V 2>&1/ =~ /(\d+\.[^\s]+)/;	# get version
+  my $version = $1;			# save version
+# open LaBrea daemon
+  my $kid = open(LABREA,$LaBrea .' |');
+  die "Can't open $LaBrea: $!" unless $kid;
+  unless ($DEBUG) {
+    open STDERR, '>&STDOUT'		or die "Can't dup stdout: $!";
+  }
+  $0 = __PACKAGE__.' '.$0;		# set ps(1) name to package name
+  return(*LABREA,$version,$kid);
+}
+
+=item * lbd_close($LBfh,$kid);
+
+Core daemon close routine, not exported but can be
+replaced externally with:
+
+  *LaBrea::Tarpit::lbd_close = sub { sutff };
+
+Close the daemon and kill off $kid with sig 15
+
+  input:	filehandle,
+		pid of kid
+  returns:	nothing
+
+=cut
+
+sub lbd_close {
+  my($LBfh,$kid) = @_;
+  kill 15, $kid;				# kill LaBrea
+  close $LBfh;
+}
+
 # autoload everything to keep daemon small
 sub daemon;
 sub bandwidth;
@@ -297,7 +354,7 @@ sub DESTROY {};
 1;
 __END__
 
-=item daemon(&hash | \%hash)
+=item * daemon(&hash | \%hash)
 
  input parameters: from hash or pointer to hash
  {
@@ -326,6 +383,7 @@ __END__
   # or
  #   'config'	=> ['/etc/LaBreaExclude','/etc/LaBreaHardExclude'],
  };
+
 =cut
 
 # 'DEBUG'	=> undef,		turn on STDERR in daemon
@@ -334,7 +392,7 @@ __END__
 
 The daemon can be run on a remote host with restricted client access and
 the data retrieved by another host that has web server capabilities
-	
+
 =back
 
 =over 4
@@ -440,7 +498,7 @@ sub daemon {
     open STDIN, '/dev/null'	or die "Can't read /dev/null: $!";
     open STDOUT, '>/dev/null'	or die "Can't write to /dev/null: $!";
     unless ( $pid = fork ) {
-      local(*LaBrea,*SERVER,*CLIENT);
+      local(*SERVER,*CLIENT);
 
       require LaBrea::NetIO;
       import LaBrea::NetIO qw(
@@ -460,16 +518,7 @@ sub daemon {
       require POSIX;
       my %tarpit;
       &POSIX::setsid()	or die "Can't start new session: $!";
-      $LaBrea =~ /^([^\s]+)/;			# bare path to LaBrea
-      qx/$1 -V 2>&1/ =~ /(\d+\.[^\s]+)/;	# get version
-      my $version = $1;				# save version
-# open LaBrea daemon
-      my $kid = open(LaBrea,$LaBrea .' |');
-      die "Can't open $LaBrea: $!" unless $kid;
-      unless ($DEBUG) {
-	open STDERR, '>&STDOUT'		or die "Can't dup stdout: $!";
-      }
-      $0 = __PACKAGE__.' '.$0;		# set ps(1) name to package name
+      my($LBfh,$version,$kid) = lbd_open($LaBrea,$DEBUG);
       $umask = 033 unless $umask;
       $cull = defaults->{cull} unless $cull;
       $ph = 0 unless $ph;
@@ -505,7 +554,7 @@ $__PACKAGE__::DOWARN = 1;
 # prepare daemon loop
       my $WNOHANG = &POSIX::WNOHANG; 
       my $rin = '';
-      vec($rin,fileno(LaBrea),1) = 1;
+      vec($rin,fileno($LBfh),1) = 1;
       my $timeout = defaults->{s_timeout};
       my ($rout,$paddr,%kids);
 
@@ -515,13 +564,13 @@ $__PACKAGE__::DOWARN = 1;
 	push @valid_clients,@_;
       }
 
-      my $max_kids = 5 unless $max_kids;
+      $max_kids = 5 unless $max_kids;
       my $kids = 0;		# number of kids alive
       while($run) {
 # accept for SERVER is not set for 'select', find it with the POLL
 	my $ready = select($rout=$rin,undef,undef,$timeout);
 	if ( $ready > 0 ) {
-	  $_ = <LaBrea>;	# blocks, but doesn't matter here
+	  $_ = <$LBfh>;	# blocks, but doesn't matter here
 	  last unless $_;	# Oops, LaBrea must have died, EXIT
 	  &log2_mem(\%tarpit,$_,1,$ph,$ds);
 	  &_check4cull(\%tarpit,\$time2cull,defaults->{auto_cull},$cull,$scrs,$ph,$ds);	# cull every few minutes
@@ -631,8 +680,7 @@ $__PACKAGE__::DOWARN = 1;
 	  $kids = reap_kids(\%kids);		# dispose of dead kids, return remaining number
 	}
       }
-      kill 15, $kid;				# kill LaBrea
-      close LaBrea;
+      lbd_close($LBfh,$kid);
       &_check4cull(\%tarpit,\$time2cull,defaults->{min_age},$cull,$scrs,$ph,$ds);	# cull threads
       &write_cache_file(\%tarpit,$cache_file,$umask,1);
       foreach $kid ( keys %kids ) {
@@ -648,7 +696,7 @@ $__PACKAGE__::DOWARN = 1;
   waitpid($pid,0);
 }
 
-=item $bandwidth = bandwidth(\%tarpit);
+=item * $bandwidth = bandwidth(\%tarpit);
 
 Returns bandwidth reported by LaBrea or zero
 if the -b option is not used or B<bw> is unknown.
@@ -665,7 +713,7 @@ sub bandwidth {
   return $tp->{bw} || 0;
 }
 
-=item $time = midnight($epoch_time,$tz);
+=item * $time = midnight($epoch_time,$tz);
 
  Returns epoch time at 00:00:00 of current day
  from any epoch time submitted. Time zone is
@@ -685,7 +733,7 @@ sub midnight {
   $mn;
 }
 
-=item $seconds = $tz2_sec($tz);
+=item * $seconds = $tz2_sec($tz);
 
   Convert time zone into seconds
 
@@ -704,7 +752,7 @@ sub tz2_sec {
   $sec;
 }
   
-=item $time_string = their_date($gmtime,$tz);
+=item * $time_string = their_date($gmtime,$tz);
 
   Returns date string like perl's 
   localtime(time)
@@ -717,7 +765,7 @@ sub their_date {
   return gmtime($time + tz2_sec($tz)) . ' ' . $tz;
 }
 
-=item $timezone = timezone($now);
+=item * $timezone = timezone($now);
 
  Returns the local timezone as a text string
 	i.e. -0800
@@ -759,7 +807,7 @@ sub timezone {
 #  return sprintf("%+05.0f",(&Time::Local::timegm(localtime($now))- $now)/36);
 #}
 
-=item $rv = restore_tarpit(\%tarpit,path2cache_file);
+=item * $rv = restore_tarpit(\%tarpit,path2cache_file);
 
  Restore the memory cache from the file cache.
 
@@ -805,7 +853,7 @@ sub restore_tarpit {
   &array2_tarpit($tp,\@lines);	# returns true
 }
 
-=item array2_tarpit(\%tarpit,\@array);
+=item * array2_tarpit(\%tarpit,\@array);
 
 Restore the memory cache from an array of
 lines as described for B<restore_tarpit>. The lines
@@ -831,7 +879,7 @@ sub array2_tarpit {
   1;    # return true
 }
 
-=item $rv = log2_mem(\%tarpit,log_line,is_daemon,port_intvls,DShield);
+=item * $rv = log2_mem(\%tarpit,log_line,is_daemon,port_intvls,DShield);
 
 Update memory cache from log output line. Set 
 B<is_daemon> if the log output is from daemon STDOUT
@@ -930,7 +978,7 @@ sub log2_mem {
   return 1;
 }
 
-=item $rv = process_log(\%tarpit,path2log_file,is_daemon,port_intvls);
+=item * $rv = process_log(\%tarpit,path2log_file,is_daemon,port_intvls);
 
 Update the memory cache from a file with lines of the
 form described for B<log2_mem>
@@ -959,7 +1007,7 @@ sub process_log {
   1;
 }
 
-=item cull_threads(\%tarpit,timeout,scanners,port_intvls,DShield);
+=item * cull_threads(\%tarpit,timeout,scanners,port_intvls,DShield);
 
 Cull aged threads from memory cache. Default time is 600
 seconds (10 min). On startup, no culls are done for the cull
@@ -1085,7 +1133,7 @@ sub cull_threads {
   }
 }
 
-=item $rv = write_cache_file(\%tarpit,path2cache_file,umask,flag);
+=item * $rv = write_cache_file(\%tarpit,path2cache_file,umask,flag);
 
  Write memory cache to file.
  returns true on success, false if file fails to open.
@@ -1143,7 +1191,7 @@ sub write_cache_file {
   rename ($dbf.'.tmp', $dbf);
 }
 
-=item wrt_cache2_handle(\%tarpit,*HANDLE,$fork);
+=item * wrt_cache2_handle(\%tarpit,*HANDLE,$fork);
 
 DEPRECATED ! removed
 
@@ -1183,7 +1231,7 @@ see B<write_cache_file> above.
 #  1;
 #}
 
-=item prep_report(\%tarpit,\%hash);
+=item * prep_report(\%tarpit,\%hash);
 
  Prepare arrays of report values from the tarpit memory cache.
  Only the values requested will be filled.
@@ -1444,7 +1492,7 @@ sub prep_report {
   }
 }
 
-=item $rv = find_old_threads(\%tarpit,\%report,$age);
+=item * $rv = find_old_threads(\%tarpit,\%report,$age);
 
   Report only aged threads
 
@@ -1479,7 +1527,7 @@ sub find_old_threads {
   return scalar keys %$rpt;
 }
 
-#=item $rv = refresh_cache_file($path2_pid_file,$path2_cache_file,$age);
+#=item * $rv = refresh_cache_file($path2_pid_file,$path2_cache_file,$age);
 #
 #  DEPRECATED and REMOVED
 #

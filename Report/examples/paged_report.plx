@@ -2,7 +2,7 @@
 #
 # paged_report.plx
 #
-my $version = '1.10';	# 8-2-02, michael@bizsystems.com
+my $version = '1.11';	# 9-5-03, michael@bizsystems.com
 # GPL'd, see Copyright notice in the package README file
 #
 use strict;
@@ -44,6 +44,8 @@ use LaBrea::Tarpit::Util qw(
 
 use lib qw( ./ );
 require 'localTrojans.pl';
+my $trojans = $LaBrea::Tarpit::Report::localTrojans::trojans
+	if $LaBrea::Tarpit::Report::localTrojans::trojans;
 
 # SET for your system
 #
@@ -51,13 +53,13 @@ my $config = {
 #  'file'	=> '/path/to/cache',	# used for test, overides host:port
 #  'd_port'	=> '8686',		# defaults to 8686
   'd_host'	=> 'localhost',		# defaults to 'localhost'
-#  'd_timeout'	=> default 180,		# seconds to wait for host response
+#  'd_timeout'	=> 180,		# default 180, seconds to wait for host response
 # THE REST USED TO ANALYZE syslog files
   'cache'	=> '/var/tmp/labrea.cache',
 #  'umask'	=> '',			# use default 033 cache_file umask
-#  'cull'	=> default 600,	# seconds to keep old threads
+#  'cull'	=> 600,		# default 600, seconds to keep old threads
   'scanners'	=> 100,			# keep this many dead threads
-#  'port_timer'	=> default 86400,	# seconds per collection period
+#  'port_timer'	=> 86400,	# default 86400, seconds per collection period
   'port_intvls'	=> 30,			# keep #nintvls of port stats
   };
 
@@ -69,12 +71,12 @@ my $look_n_feel = {	# defaults shown
     'bakgnd'	=> '#000000',  
   # below are all for port_intervals
     'images'	=> './',		# REQUIRED, path to images
-#    'height'	=> 72,			# default 
-#    'width'	=> 7,			# default 
+#    'height'	=> 72,			# default 72
+#    'width'	=> 7,			# default  7
 #    'legend'	=> 'text for graph',	# optional
     'threshold'	=> 5,	# ignore below this count
 #    'trojans'	=> \%trojans,		# optional
-    'trojans'	=> $LaBrea::Tarpit::Report::localTrojans::trojans,
+    'trojans'	=> $trojans,
 	#	 where %trojans is of the form
 	#	(	# info not in /etc/services
 	#	# port          text
@@ -85,7 +87,7 @@ my $look_n_feel = {	# defaults shown
   # below are for html file caching
   # the directory for the cache file MUST be writable by the web server
     'html_cache_file'	=> './tmp/html_report.cache',	# required
-    'html_expire'	=> '60',			# cache expiration, secs
+    'html_expire'	=> 60,				# cache expiration, secs
   # optional other_sites stats cache location
     'other_sites'	=> './tmp/site_stats',
 };
@@ -128,7 +130,7 @@ $_ = pop @_;
 @extras = (					# extra buttons
 	''		=> '',			# button space
 	'SINGLE PAGE'	=> './html_report.'.$_.' onClick="return(please_wait(this));"',
-	'DOWNLOAD'	=> 'http://www.bizsystems.net/downloads/',
+	'DOWNLOAD'	=> 'http://search.cpan.org/search?query=LaBrea::Tarpit&mode=all',
 );
 
 =cut
@@ -136,8 +138,6 @@ $_ = pop @_;
 #########################################################
 ############ no more user setable parameters ############
 #########################################################
-
-$_ = $LaBrea::Tarpit::Report::localTrojans::trojans;	# silence strict warning
 
 my ($image_cache,$use_cache,$error,$rpt,$sht,$html,$report,$short,$out,%tarpit);
 
@@ -215,8 +215,7 @@ Tom Liston's LaBrea scanner/worm disruptor. For more
 information on LaBrea see: <a href="http://www.hackbusters.net/">www.hackbusters.net</a>
 <p>
 To download these scripts see:<br>
-&nbsp;&nbsp;<a
-href="http://www.bizsystems.net/downloads/">www.bizsystems.net/downloads/</a></font></td>
+&nbsp;&nbsp;<a href="http://search.cpan.org/search?query=LaBrea::Tarpit&mode=all">CPAN.org</a></font></td>
 <td valign=top>
 | . $out->{capture_summary} . q|</td></tr>
 <tr><td colspan=2  bgcolor="| . $look_n_feel->{bakgnd} . q|"><font face="| . 

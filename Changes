@@ -1,5 +1,13 @@
 Revision history for Perl extension LaBrea::Tarpit
 
+1.17  Tue Sep  9 13:51:56 PDT 2003
+	update Report.pm to support SpamCannibal
+
+1.16  Wed Sep  3 19:42:22 PDT 2003
+	separate out daemon start and stop routines
+	to facilitate support of Mail::SpamCannibal
+	Fix duplicated 'my' max_kids
+
 1.15  Tue Aug 12 10:06:40 PDT 2003
 	remove case sensitivity from server authentication
 	in Report/examples/whois.plx

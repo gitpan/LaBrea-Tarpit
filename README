@@ -127,7 +127,7 @@ DESCRIPTION - LaBrea::Tarpit
     is no longer supported as there were problems maintaining separate
     sessions.
 
-    recurse_hash2txt(\$txt_buffer,\%hash,$keys_so_far,flag)
+    * recurse_hash2txt(\$txt_buffer,\%hash,$keys_so_far,flag)
        Appends to txt_buffer.
 
        Generates a text tree of a hash.
@@ -137,7 +137,37 @@ DESCRIPTION - LaBrea::Tarpit
        flag = 1, ksf = ptr                    this input
        ptr->{lvl1}->{lvl2}->{lvl3} = 5;       this txt
 
-    daemon(&hash | \%hash)
+    * ($LBfh,$version,$kid) = lbd_open($LaBrea,$DEBUG);
+      Core daemon start routine. Not exported, but can be replaced
+      externally with:
+
+        *LaBrea::Tarpit::lbd_open = sub { stuff };
+
+      Returns the pid of the underlying process (if any) and the version
+      number of that process. It also sets the command line shown by 'ps'
+      like this:
+
+        $0 = 'stuff';
+
+        input:        path to daemon,
+                      STDERR switch
+        returns:      LaBrea file handle,
+                      version,
+                      pid of kid
+
+    * lbd_close($LBfh,$kid);
+      Core daemon close routine, not exported but can be replaced externally
+      with:
+
+        *LaBrea::Tarpit::lbd_close = sub { sutff };
+
+      Close the daemon and kill off $kid with sig 15
+
+        input:        filehandle,
+                      pid of kid
+        returns:      nothing
+
+    * daemon(&hash | \%hash)
        input parameters: from hash or pointer to hash
        {
         'LaBrea'      => '/usr/local/bin/LaBrea -z -v -p 1000 -h -i eth0 -b -O 2>&1',
@@ -165,9 +195,6 @@ DESCRIPTION - LaBrea::Tarpit
         # or
        #   'config'   => ['/etc/LaBreaExclude','/etc/LaBreaHardExclude'],
        };
-      =cut
-
-      # 'DEBUG' => undef, turn on STDERR in daemon
 
       The daemon can be run on a remote host with restricted client access
       and the data retrieved by another host that has web server
@@ -211,33 +238,33 @@ DESCRIPTION - LaBrea::Tarpit
       threads or a truncated version suitable for making a short report.
       config sends the daemon configuration file information to the client.
 
-    $bandwidth = bandwidth(\%tarpit);
+    * $bandwidth = bandwidth(\%tarpit);
       Returns bandwidth reported by LaBrea or zero if the -b option is not
       used or bw is unknown.
 
-    $time = midnight($epoch_time,$tz);
+    * $time = midnight($epoch_time,$tz);
        Returns epoch time at 00:00:00 of current day
        from any epoch time submitted. Time zone is
        calculated (inefficently) each time if omitted.  
 
-    $seconds = $tz2_sec($tz);
+    * $seconds = $tz2_sec($tz);
         Convert time zone into seconds
 
         input:        timezone i.e. -0800
         returns:      seconds i.e. -28800
 
-    $time_string = their_date($gmtime,$tz);
+    * $time_string = their_date($gmtime,$tz);
         Returns date string like perl's 
         localtime(time)
         for the specified time zone
 
-    $timezone = timezone($now);
+    * $timezone = timezone($now);
        Returns the local timezone as a text string
               i.e. -0800
        uses current time if $now is omitted, 
        this is the normal method of usage.
 
-    $rv = restore_tarpit(\%tarpit,path2cache_file);
+    * $rv = restore_tarpit(\%tarpit,path2cache_file);
        Restore the memory cache from the file cache.
 
        returns        true if successful
@@ -266,14 +293,14 @@ DESCRIPTION - LaBrea::Tarpit
 
          tz:-0800
 
-    array2_tarpit(\%tarpit,\@array);
+    * array2_tarpit(\%tarpit,\@array);
       Restore the memory cache from an array of lines as described for
       restore_tarpit. The lines must already be stripped of return
       characters
 
       Always returns true;
 
-    $rv = log2_mem(\%tarpit,log_line,is_daemon,port_intvls,DShield);
+    * $rv = log2_mem(\%tarpit,log_line,is_daemon,port_intvls,DShield);
       Update memory cache from log output line. Set is_daemon if the log
       output is from daemon STDOUT
 
@@ -301,7 +328,7 @@ DESCRIPTION - LaBrea::Tarpit
 
        Returns:       true / false on success / fail
 
-    $rv = process_log(\%tarpit,path2log_file,is_daemon,port_intvls);
+    * $rv = process_log(\%tarpit,path2log_file,is_daemon,port_intvls);
       Update the memory cache from a file with lines of the form described
       for log2_mem
 
@@ -311,7 +338,7 @@ DESCRIPTION - LaBrea::Tarpit
 
       Returns true on success, false if file fails to open
 
-    cull_threads(\%tarpit,timeout,scanners,port_intvls,DShield);
+    * cull_threads(\%tarpit,timeout,scanners,port_intvls,DShield);
       Cull aged threads from memory cache. Default time is 600 seconds (10
       min). On startup, no culls are done for the cull time interval to
       retain old capture time information for any lingering black hats that
@@ -323,7 +350,7 @@ DESCRIPTION - LaBrea::Tarpit
 
       appends DShield info to file specified in DShield if present
 
-    $rv = write_cache_file(\%tarpit,path2cache_file,umask,flag);
+    * $rv = write_cache_file(\%tarpit,path2cache_file,umask,flag);
        Write memory cache to file.
        returns true on success, false if file fails to open.
 
@@ -338,12 +365,12 @@ DESCRIPTION - LaBrea::Tarpit
        flag   = true,  append 'daemon' to version
        flag   = false, append 'static' to version
 
-    wrt_cache2_handle(\%tarpit,*HANDLE,$fork);
+    * wrt_cache2_handle(\%tarpit,*HANDLE,$fork);
       DEPRECATED ! removed
 
       Write memory cache to open handle, see write_cache_file above.
 
-    prep_report(\%tarpit,\%hash);
+    * prep_report(\%tarpit,\%hash);
        Prepare arrays of report values from the tarpit memory cache.
        Only the values requested will be filled.
 
@@ -402,7 +429,7 @@ DESCRIPTION - LaBrea::Tarpit
       NOTE: prep_report will fill any subset of the specified or all if they
       are all specified
 
-    $rv = find_old_threads(\%tarpit,\%report,$age);
+    * $rv = find_old_threads(\%tarpit,\%report,$age);
         Report only aged threads
 
         input:        \%tarpit, \%report, age_in_days 

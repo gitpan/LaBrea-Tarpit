@@ -1,5 +1,5 @@
 NAME
-    LaBrea::Tarpit::Report
+    LaBrea::Tarpit::Report - tarpit log analysis and report
 
 SYNOPSIS
       use LaBrea::Tarpit::Report qw( ... );
@@ -13,7 +13,7 @@ SYNOPSIS
       got_away(\%report,\%look_n_feel,\%output);
       my_IPs(\%report,\%look_n_feel,\%output);
       get_config(\%hash,\%look_n_feel);
-      get_versions($report,\%look_n_feel,\%output);
+      get_versions($report,\%look_n_feel,\%output,$dname);
       port_stats(\%report,\%look_n_feel,\%output);
       short_report(\$report,\%out);
       $html=make_buttons(\%look_n_feel,$url,$active,\@buttons,$xtra);
@@ -105,10 +105,11 @@ DESCRIPTION - LaBrea::Tarpit::Report
         for the keys that you provide. Text generated
         is of the form:
 
-    * gen_short(($input,\%output); sub gen_short takes similar arguments as
-    generate, however the %output array may be (usually is) empty. It will
-    insert the minimum information required in %output prior to a call to
-    short_report.
+    * gen_short(($input,\%output);
+      sub gen_short takes similar arguments as generate, however the %output
+      array may be (usually is) empty. It will insert the minimum
+      information required in %output prior to a call to short_report.
+
       Returns false on success, error message $@ on failure. Likely cause of
       failure is dameon not running when attempting to open the daemon fifo.
 
@@ -202,15 +203,16 @@ DESCRIPTION - LaBrea::Tarpit::Report
         fills:        %output{my_IPs} with html table
         returns:      true on success
 
-    * $html=get_versions($report,\%look_n_feel,\%output);
+    * $html=get_versions($report,\%look_n_feel,\%output,$dname);
         Return html table of versions numbers, no border
 
              $header
-        LaBrea        nn.nn
+        $dname        nn.nn
         Tarpit        nn.nn
         Report        nn.nn
         Util          nn.nn
 
+        $dname defaults to 'LaBrea' if false
         fills:        %output{versions} with html table
         returns:      true on success
 

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report;
 #
-# 9-5-03, michael@bizsystems.com
+# 9-29-03, michael@bizsystems.com
 #
 use strict;
 #use diagnostics;
@@ -11,6 +11,7 @@ use vars qw(
 	@EXPORT_OK
 	$geek1
 	$geek2
+	$geek3
 	$hard_font_clr
 	$scan_font_clr
 	$h_ex_font_clr
@@ -18,7 +19,7 @@ use vars qw(
 	@std_images
 	);
 
-$VERSION = do { my @r = (q$Revision: 1.07 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.08 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use AutoLoader 'AUTOLOAD';
 
@@ -65,7 +66,8 @@ require Exporter;
 
 # address of GEEKS whois lookup
   $geek1 = q|<a href="#top" onClick="popwin();whois.query.value='|;
-  $geek2 = q|';whois.submit();return false" onMouseOver="status='';return true;">|;
+  $geek2 = q|';whois.submit();return false;" onMouseOut="status='';return true;" onMouseOver="status='|;
+  $geek3 = q|';return true;">|;
 
 # colors
   $hard_font_clr	= '#ffffcc';	# hard captured font color
@@ -222,6 +224,8 @@ this module.
 
   # optional other_sites stats cache location
     'other_sites'     => './tmp/site_stats',
+  # optional whois action name
+    'whois'           => 'whois',	(as in whois.cgi)
   );
 
 Output hash, fills the values with html text if the
@@ -562,6 +566,8 @@ sub guests_by_IP {
     return undef unless exists $out->{guests_by_IP};
     my $col = 0;                # left or right column
 
+# whois name
+  my $whois = $lnf->{whois} || 'whois';
 # get page extension
     scriptname() =~ /\.([a-zA-Z_-]+)/;
     my $ext = $1;
@@ -574,7 +580,7 @@ sub guests_by_IP {
     $tdcfg->{size} = 2;
     my $font = &tdcfg_font($tdcfg);
     $out->{guests_by_IP} = q|<!-- GUESTS BY IP -->
-<a name="GUESTS BY IP"></a><form name=whois action="whois.|. $ext .q|" method=GET target=whois>
+<a name="GUESTS BY IP"></a><form name=whois action="|. $whois .'.'. $ext .q|" method=GET target=pop_whois>
 <input type=hidden name=query value="">
 <table cellspacing=1 cellpadding=2 border=2>
 <tr align=center><td colspan=6
@@ -586,7 +592,7 @@ $report->{threads} . q
 <tr align=center><td colspan=6
 bgcolor="|. $tdcfg->{td_clr} .q
 |"><|. $font .q|<b><i>Click on an IP for WHOIS information</i></b></font>|.
-make_jsPOP_win('whois') .q|</td></tr>
+make_jsPOP_win('pop_whois') .q|</td></tr>
 |;
 
     $tdcfg->{size} = 3;
@@ -607,7 +613,8 @@ make_jsPOP_win('whois') .q|</td></tr>
       delete $tdcfg->{align};
       $out->{guests_by_IP} .= '<tr>' unless $col;
       $out->{guests_by_IP} .= &txt2td($tdcfg,$geek1 . 
-	$report->{th_srcIP}->[$_] . $geek2 . 
+	$report->{th_srcIP}->[$_] . $geek2 .
+	$report->{th_srcIP}->[$_] . $geek3 .
 	$report->{th_srcIP}->[$_] . '</a>');
       $tdcfg->{align} = 'center';
       $out->{guests_by_IP} .= &txt2td($tdcfg,$report->{th_numTH}->[$_]);
@@ -712,6 +719,9 @@ sub got_away {
     my ($report,$lnf,$out) = @_;
     return undef unless exists $out->{got_away};
 
+# whois name
+    my $whois = $lnf->{whois} || 'whois';
+
 # get page extension
     scriptname() =~ /\.([a-zA-Z_-]+)/;
     my $ext = $1;
@@ -726,7 +736,7 @@ sub got_away {
     $_ = q|<tr><td colspan=4 border=0 bgcolor="|. $tdcfg->{td_clr} . q|">&nbsp;|;
 
     $out->{got_away} = q|<!-- GOT AWAY -->
-<a name="GOT AWAY"></a><form name=whois action="whois.|. $ext .q|" method=GET target=whois>
+<a name="GOT AWAY"></a><form name=whois action="|. $whois .'.'. $ext .q|" method=GET target=pop_whois>
 <input type=hidden name=query value="">
 <table cellspacing=1 cellpadding=2 border=2>
 | . $_ . q|These IP addresses have scanned our IP block recently but are no longer probing.</td></tr>
@@ -737,7 +747,7 @@ sub got_away {
 </td></tr>
 <tr align=center><td colspan=4 bgcolor="|. $tdcfg->{td_clr} . q|"><|. $font . q
 |>&nbsp;<b><i>Click on an IP for WHOIS information</i></b></font>|.
-make_jsPOP_win('whois') .q|</td></tr>
+make_jsPOP_win('pop_whois') .q|</td></tr>
 |;
 
     $out->{got_away} .= '<tr>' . 
@@ -756,6 +766,7 @@ make_jsPOP_win('whois') .q|</td></tr>
       $tdcfg->{td_clr} = ($report->{sc_prst}->[$_] == $TCP) ? '#cc0000' : '#009900';
       $out->{got_away} .= &txt2td($tdcfg,$geek1 . 
 	$report->{sc_srcIP}->[$_] . $geek2 . 
+	$report->{sc_srcIP}->[$_] . $geek3 .
 	$report->{sc_srcIP}->[$_] . '</a>'.' -> '. $report->{sc_dPORT}->[$_]);
       $out->{got_away} .= &txt2td($tdcfg,time2local($report->{sc_last}->[$_], $report->{tz}));  
       $col = !$col;

@@ -84,6 +84,8 @@ DESCRIPTION - LaBrea::Tarpit::Report
 
         # optional other_sites stats cache location
           'other_sites'     => './tmp/site_stats',
+        # optional whois action name
+          'whois'           => 'whois',       (as in whois.cgi)
         );
 
       Output hash, fills the values with html text if the key->value pair

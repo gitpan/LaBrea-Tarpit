@@ -1,5 +1,13 @@
 Revision history for Perl extension LaBrea::Tarpit
 
+1.07  Wed Sep 18 18:26:00 PDT 2002
+	Correct documentation typo in Report/examples/localTrojans.pl
+
+	modified test procedure in t/append_open.t, hopefully to accomodate
+	'flock' pecularities in solaris 2.8 sun4-solaris. These changes are
+	UNTESTED, I don't have a sun box. There are no changes to the
+	modules themselves.
+
 1.06  Tue Aug 20 13:29:43 PDT 2002
 	Update t/find_old_threads.t to allow tests to succeed
 	in timezones other than US-Pacific.

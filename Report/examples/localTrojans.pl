@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report::localTrojans;
 #
-# version 1.06, updated 5-22-02, never complete :-)
+# version 1.09, updated 9-11-02, never complete :-)
 #
-# find a port by number, try tcp then upd
+# find a port by number, try tcp then udp
 #
 # port assignments can be found at
 # http://www.iana.org/assignments/port-numbers
@@ -22,13 +22,25 @@ use vars qw( $trojans );
 
 $trojans = {
 # some well known ports not always in 'services'
+  1115	=> 'ardus-trns',
+  1214	=> 'Kazaa',
   6346	=> 'Gnutella',
+  6660	=> 'IRC Chat',
+  6661	=> 'IRC Chat',
+  6662	=> 'IRC Chat',
+  6663	=> 'IRC Chat',
+  6664	=> 'IRC Chat',
+  6665	=> 'IRC Chat',
+  6666	=> 'IRC Chat',
+  6667	=> 'IRC Chat',
+  6668	=> 'IRC Chat',
+  6669	=> 'IRC Chat',
   8000	=> 'Shoutcast WWW Server Hack',
   10080	=> 'alternate www',
+  43981	=> 'NewareIP',
 # these trojans can be found at
 # http://www.robertgraham.com/pubs/firewall-seen.html
   555	=> 'phAse zero',
-  1115	=> 'ardus-trns',
   1243	=> 'Sub-7',
   3129	=> 'Masters Paradise',
   6670  => 'Deep Throat',
@@ -41,13 +53,17 @@ $trojans = {
   30100	=> 'NetSphere',
   31789	=> "Hack'aTack",
   31337	=> 'BackOrifice',
-  43981	=> 'NewareIP',
   50505	=> 'Sockets de Troie',
 };
 
 # overlay above with below in order
 
 @_ = split('\n',q|
+#
+# user contributions
+4899 Radmin, JDeveloperPro
+6129 Dameware
+9666 RabbIT2
 #
 # this URL has links to many descriptions of hacks and ports that are
 # not listed on it's port list page which are included below.
@@ -122,7 +138,6 @@ $trojans = {
 901 swat, realsecure
 993 s-imap
 995 s-pop
-999
 1062 Veracity
 1080 SOCKS
 1085 WebObjects
@@ -206,9 +221,8 @@ $trojans = {
 5801 VNC
 5900 VNC
 5901 VNC
-5843
 6000 X Windows
-6112 BattleNet
+6112 BattleNet, CDE
 6502 Netscape Conference
 6667 IRC
 6670 VocalTec Internet Phone, DeepThroat
@@ -229,9 +243,7 @@ $trojans = {
 10008 cheese worm
 11371 PGP 5 Keyserver
 13223 PowWow
-13224
- PowWow
-14000
+13224 PowWow
 14237 Palm
 14238 Palm
 18888 LiquidAudio

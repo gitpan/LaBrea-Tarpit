@@ -9,7 +9,6 @@
 BEGIN { $| = 1; print "1..10\n"; }
 END {print "not ok 1\n" unless $loaded;}
 use lib qw(blib/arch blib/lib ../ ../blib/lib ../blib/arch);
-use Fcntl qw(:DEFAULT :flock);
 use LaBrea::Tarpit::DShield qw(
 	move2_Q
 	deliver2_DShield

@@ -9,7 +9,7 @@ use strict;
 #use diagnostics;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = do { my @r = (q$Revision: 1.06 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.07 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use Fcntl qw(:DEFAULT :flock);
 use AutoLoader 'AUTOLOAD';
@@ -46,9 +46,7 @@ use constant mon => {
 
 =head1 NAME
 
-LaBrea::Tarpit
-
-  A collection web display and utilities for 
+  LaBrea::Tarpit : Utilities and web displays for 
   Tom Liston's LaBrea scanner/worm disruptor
 
   See: http://www.hackbusters.net

@@ -53,44 +53,55 @@ print ONE $filetxt;
 
 # try to open lock it again, should fail
 
-local $SIG{ALRM} = sub {die "timeout"};
+local *TEST;
+if (open TEST,'-|') {
+  print (<TEST>);
+} else {
+
+
+  local $SIG{ALRM} = sub {die "timeout"};
 
 ## test ex open against previous ex_open
 ## test 2
-eval {
-  alarm 1;
-  ex_open(*LOCK2,*ONE,$filedb);
-  alarm 0;
-};
-if ( $@ && $@ !~ /timeout/ ) {
-  print "$@\nnot ";
-} elsif ( ! $@ ) {
-  print "unwanted exclusive lock succeeded\nnot ";
-}
-print "ok $test\n";
-$test++;
+  eval {
+    alarm 1;
+    ex_open(*LOCK2,*ONE,$filedb);
+    alarm 0;
+  };
+  if ( $@ && $@ !~ /timeout/ ) {
+    print "$@\nnot ";
+  } elsif ( ! $@ ) {
+    print "unwanted exclusive lock succeeded\nnot ";
+  }
+  print "ok $test\n";
+  $test++;
 
-close LOCK2;
+  close LOCK2;
 
 ## test shared open against previous ex_open
 ## test 3
-eval {
-  alarm 1;
-  sysopen LOCK2, $filedb . '.flock', O_RDWR|O_CREAT|O_TRUNC;
-  flock(LOCK2,LOCK_SH);
-  alarm 0;
-};
-if ( $@ && $@ !~ /timeout/ ) {
-  print "$@\nnot ";
-} elsif ( ! $@ ) {   
-  print "unwanted shared lock succeeded\nnot ";
-}
-print "ok $test\n";
-$test++;
-close LOCK2;
+  eval {
+    alarm 1;
+    sysopen LOCK2, $filedb . '.flock', O_RDWR|O_CREAT|O_TRUNC;
+    flock(LOCK2,LOCK_SH);
+    alarm 0;
+  };
+  if ( $@ && $@ !~ /timeout/ ) {
+    print "$@\nnot ";
+  } elsif ( ! $@ ) {   
+    print "unwanted shared lock succeeded\nnot ";
+  }
+  print "ok $test\n";
+  $test++;
+  close LOCK2;
 
+  exit;
+}
+close TEST;
 close_file(*LOCK1,*ONE);
 
+$test = 4;
+## test 4
 my $txt1 = '';
 my $txt2 = '';
 
@@ -108,12 +119,14 @@ print "txt1 ne orig\nnot " if $txt1 ne $filetxt;
 print "ok $test\n";
 $test++;
 
+## test 5
 # open and append
 
 ex_open(*LOCK1,*ONE,$filedb);
 print ONE $extra;
 close_file(*LOCK1,*ONE);
 
+## test 6
 $txt1 = '';
 print 'not ' unless open(ONE,$filedb);
 print "ok $test\n";
@@ -124,6 +137,8 @@ while(<ONE>) {
 }
 
 close ONE;
+
+## test 7
 print "extra not appended\nnot " if $txt1 ne $filetxt . $extra;
 print "ok $test\n";
 $test++;

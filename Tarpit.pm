@@ -9,7 +9,7 @@ use strict;
 #use diagnostics;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = do { my @r = (q$Revision: 1.32 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.33 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use Fcntl qw(:DEFAULT :flock);
 use AutoLoader 'AUTOLOAD';
@@ -49,7 +49,7 @@ use constant mon => {
   LaBrea::Tarpit - Utilities and web displays for 
   Tom Liston's LaBrea scanner/worm disruptor
 
-  See: http://www.hackbusters.net
+  See: http://sourceforge.net/projects/labrea/
 
 =head1 SYNOPSIS
 
@@ -173,7 +173,7 @@ and stat collection it provides a detailed HTML page containing:
 
 =back
 
-For more information on B<LaBrea> see: L<http://www.hackbusters.net/> 
+For more information on B<LaBrea> see: L<http://sourceforge.net/projects/labrea/> 
 or contact the author of LaBrea, Tom Liston L<tliston@hackbusters.net>.
 
 The parsed output of either syslog data or STDOUT from LaBrea using -o or -O

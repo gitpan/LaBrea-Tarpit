@@ -1,5 +1,8 @@
 Revision history for Perl extension LaBrea::Tarpit::Report
 
+1.15  Sat Nov 13 16:31:56 PST 2004
+	update documentation
+
 1.14  Sun Nov  7 11:34:42 PST 2004
 	updated html list of trojans on paged_report.plx page
 

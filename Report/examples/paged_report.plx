@@ -2,7 +2,7 @@
 #
 # paged_report.plx
 #
-my $version = '1.14';	# 10-29-03, michael@bizsystems.com
+my $version = '1.15';	# 3-27-04, michael@bizsystems.com
 # GPL'd, see Copyright notice in the package README file
 #
 use strict;
@@ -139,7 +139,8 @@ $_ = pop @_;
 ############ no more user setable parameters ############
 #########################################################
 
-my ($image_cache,$use_cache,$error,$rpt,$sht,$html,$report,$short,$out,%tarpit);
+my ($image_cache,$use_cache,$error,$rpt,$sht,$html,$report,$short,$out);
+my $tarpit = {};
 
 # make keys of the commands or hrefs
 @_ = (
@@ -177,7 +178,7 @@ if ( $page eq 'short' ) {	# skip the main cache check
 # note that $upd & $use_cache will be false
   }
   else {
-    restore_tarpit(\%tarpit,$look_n_feel->{html_cache_file}.'.mem')
+    restore_tarpit($tarpit,$look_n_feel->{html_cache_file}.'.mem')
 	unless ($use_cache = page_is_current($mtime,			 # always set $use_cache
 	$look_n_feel->{html_cache_file}.'.'.$page)) || $page eq 'other'; # but skip restore if tarpit not needed
   }
@@ -200,7 +201,7 @@ elsif ( $page eq 'summary' ) {
 	'cs_ctd'		=> \@csctd,  # captured this date
   };
 
-  prep_report(\%tarpit,$out);
+  prep_report($tarpit,$out);
   get_versions($out,$look_n_feel,$out);
   capture_summary($out,$look_n_feel,$out);
 
@@ -255,7 +256,7 @@ elsif ( $page eq 'attackers' ) {
 	'th_srcIP'	=> \@thsip,
 	'th_numTH'	=> \@thnum,	# number threads this IP
   };
-  prep_report(\%tarpit,$out);
+  prep_report($tarpit,$out);
   guests_by_IP($out,$look_n_feel,$out);
   $rpt = \$out->{guests_by_IP};
 }
@@ -273,7 +274,7 @@ elsif ( $page eq 'captured' ) {
 	'tg_last' 	=> \@tglst,	# last contact
 	'tg_prst'	=> \@tgpst,	# persistent [true|false]
   };
-  prep_report(\%tarpit,$out);
+  prep_report($tarpit,$out);
   guests($out,$look_n_feel,$out);
   $rpt = \$out->{guests};
 }
@@ -289,7 +290,7 @@ elsif ( $page eq 'escaped' ) {
 	'sc_prst'	=> \@scpst,	# persistent [true|false]
 	'sc_last'	=> \@sclst,	# last contact
   };
-  prep_report(\%tarpit,$out);
+  prep_report($tarpit,$out);
   got_away($out,$look_n_feel,$out);
   $rpt = \$out->{got_away};
 }
@@ -304,7 +305,7 @@ elsif ( $page eq 'local-ips' &&
 	'ph_dstIP'	=> \@phdip,	# B<REQUIRED>
 	'ph_prst'	=> \@phpst,	# persistent [true|false]
   };
-  prep_report(\%tarpit,$out);
+  prep_report($tarpit,$out);
   my_IPs($out,$look_n_feel,$out);
   $rpt = \$out->{my_IPs};
 }
@@ -319,7 +320,7 @@ elsif ( $page eq 'trends' ) {
 	'ports'		 => \@ports,	# scanned port list
 	'portstats'	 => \@portstats,
   };
-  prep_report(\%tarpit,$out);
+  prep_report($tarpit,$out);
   port_stats($out,$look_n_feel,$out);
   $rpt = \$out->{port_intervals};
   $image_cache = make_image_cache($look_n_feel->{images});
@@ -369,6 +370,7 @@ elsif ( $page eq 'short' ) {
   undef $rpt;
 }
 
+$tarpit = {};				# destroy tarpit cache
 if ( $error ) {
   $upd = 1;		# unconditional
   undef $sht;
@@ -499,4 +501,13 @@ $xhead: $xhv
 
 $textp|;
 }
+
+# free memory resources for re-use
+undef $rpt;
+undef $sht;
+undef $html;
+undef $report;
+undef $short;
+undef $out;
+
 1;

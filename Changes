@@ -1,5 +1,19 @@
 Revision history for Perl extension LaBrea::Tarpit
 
+1.27	Sun Mar 28 11:16:35 PST 2004
+	revert to previous 1.24 behavior on not writing out cache file
+	kept some code clean up.
+	
+1.26  Sat Mar 27 15:32:14 PST 2004
+	NOT RELEASED
+	The previous modification had the wrong scope for the tarpit hash,
+	removed _cullingquish and implemented in-line code instead
+
+1.25  Thu Mar  4 10:43:54 PST 2004
+	add subroutine '_cullnsquish' to augment '_check4cull'
+	to collapse tarpit hash if a data removal is detected.
+	This should reduce memory bloat.
+
 1.24  Tue Nov 11 16:46:20 PST 2003
 	include patch for labrea-2.5-stable-1
 	and original LaBrea2_4b3.tgz in the distribution

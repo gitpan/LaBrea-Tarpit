@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report::localTrojans;
 #
-# version 1.13, updated 7-21-03, never complete :-)
+# version 1.18, updated 2-18-04, never complete :-)
 #
 # find a port by number, try tcp then udp
 #
@@ -22,9 +22,27 @@ use vars qw( $trojans );
 
 $trojans = {
 # some well known ports not always in 'services'
+  1108	=> 'ratio-adp',
   1115	=> 'ardus-trns',
+  1182	=> 'Sobig.a (BigBoss) virus',
   1214	=> 'Kazaa',
+  1257	=> 'Frenzy - Frenzy2000',
+  1745	=> 'Qhosts aka (aolfix.exe) trojan',
+  1998	=> 'cisco X.25 service',
+  2002	=> 'TransScout',
+  2003	=> 'TransScout',
+  2004	=> 'TransScout',
+  2005	=> 'TransScout',
+  3127	=> 'MyDoom_A',
+  3128	=> 'MyDoom',
+  4480	=> 'proxy-plus',
+  4489	=> 'Brown Orifice??',
+  5190	=> 'Aol Instant Messenger',
+  5191	=> 'Aol Instant Messenger',
+  5192	=> 'Aol Instant Messenger',
+  5193	=> 'Aol Instant Messenger',
   5433	=> 'postgreSQL, Stunnel',
+  5490	=> 'LNVALARM Access',
   6346	=> 'Gnutella',
   6588	=> 'AnalogX Proxy Server',
   6660	=> 'IRC Chat',
@@ -37,8 +55,18 @@ $trojans = {
   6667	=> 'IRC Chat',
   6668	=> 'IRC Chat',
   6669	=> 'IRC Chat',
+  7441	=> 'LNVALARM Access',
   8000	=> 'Shoutcast WWW Server Hack',
-  10080	=> 'alternate www',
+  8001	=> 'VCOM Tunnel',
+  8002	=> 'Teradata ORDMBS',
+  8180	=> 'Aplore/Aphex/Bloodhound worm',
+  9100	=> 'Backdoor.Cabro',
+  10080	=> 'alternate www, MyDoom',
+  10168	=> 'Lovgates remote control',
+  20168	=> 'Lovgates remote control',
+  25867	=> 'Ring0 trojan',
+  34816	=> 'Dirt, Backdoor.SubSari15 trojan',
+  45295	=> 'Firebird DB trojan',
   43981	=> 'NewareIP',
 # these trojans can be found at
 # http://www.robertgraham.com/pubs/firewall-seen.html
@@ -112,6 +140,7 @@ my $builder = sub {
 9276 trojan Wingate 3.0
 9277 trojan Wingate 3.0
 9278 trojan Wingate 3.0
+17300 Milkit trojan
 #
 # this URL has links to many descriptions of hacks and ports that are
 # not listed on it's port list page which are included below.
@@ -187,7 +216,7 @@ my $builder = sub {
 993 s-imap
 995 s-pop
 1062 Veracity
-1080 SOCKS
+1080 MyDoom
 1085 WebObjects
 1227 DNS2Go
 1243 SubSeven
@@ -480,7 +509,7 @@ port 1049 Delf, The Hobbit Daemon
 port 1052 Fire HacKer, Slapper, The Hobbit Daemon
 port 1053 The Thief
 port 1054 AckCmd, RemoteNC
-port 1080 SubSeven 2.2, WinHole
+port 1080 SubSeven 2.2, WinHole, MyDoom
 port 1081 WinHole
 port 1082 WinHole
 port 1083 WinHole
@@ -621,7 +650,7 @@ port 3006 Clandestine
 port 3024 WinCrash
 port 3031 MicroSpy
 port 3119 Delta Remote Access
-port 3128 Reverse WWW Tunnel Backdoor , RingZero
+port 3128 MyDoom, RingZero, Reverse Tunnel
 port 3129 Masters Paradise
 port 3131 SubSARI
 port 3150 Deep Throat , The Invasor, The Invasor

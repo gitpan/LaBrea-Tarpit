@@ -1,5 +1,9 @@
 Revision history for Perl extension LaBrea::Tarpit::Report
 
+1.12  Sat Mar 27 15:58:39 PST 2004
+	update paged_report.plx to clear tarpit hash so the garbage
+	collector can recover the memory. No changes to Report.pm
+
 1.11  Tue Oct 21 12:18:00 PDT 2003
 	aarrggggg....  typo in version 1.10 bug fix
 

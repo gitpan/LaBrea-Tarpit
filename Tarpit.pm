@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit;
 #
-# 10-29-03, michael@bizsystems.com
+# 3-28-04, michael@bizsystems.com
 #
 BEGIN { $SIG{'__WARN__'} = sub { warn $_[0] if $DOWARN }}
 $__PACKAGE__::DOWARN = 1;
@@ -9,7 +9,7 @@ use strict;
 #use diagnostics;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = do { my @r = (q$Revision: 1.24 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.27 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use Fcntl qw(:DEFAULT :flock);
 use AutoLoader 'AUTOLOAD';
@@ -75,7 +75,7 @@ use constant mon => {
 
   $rv = process_log(\%tarpit,path2log_file,is_daemon,port_intvls);
 
- 	cull_threads(\%tarpit,timeout,scanners,port_intvls,DShield);
+  $rv = cull_threads(\%tarpit,timeout,scanners,port_intvls,DShield);
 
   $rv = write_cache_file(\%tarpit,path2cache_file,umask,flag);
 
@@ -343,6 +343,7 @@ sub find_old_threads;
 sub array2_tarpit;
 
 # helper subroutines
+#sub _cullnsquish;
 sub _check4cull;
 sub _init_pt;
 sub _add_array;
@@ -454,15 +455,41 @@ configuration file information to the client.
 # 
 # input:	time between culls
 #
+# returns:	true if cull reduces thread count, else false
+#
 sub _check4cull {
   my ($tp,$ttcp,$wait_time,$cull,$scrs,$ph,$ds) = @_;
   my $now = $tp->{now} = time;
   if ( $now > $$ttcp + $wait_time ) {
     $$ttcp = $now;		# reset wait time
-    &cull_threads($tp, $cull, $scrs, $ph, $ds);
+    return &cull_threads($tp, $cull, $scrs, $ph, $ds);
   }
+  0;
 }
 
+# check as above and if there is a tarpit cull,
+# collapse the tarpit hash to conserve memory
+# 1) write out the hash to disk
+# 2) set the tarpit hash to an anon empty array
+# 3) reload the tarpit from the disk
+#
+# returns:	true if cull, else false
+#		fails silently if there is no cache file
+
+#sub _cullnsquish {
+#  my ($tp,$ttcp,$wait_time,$cull,$scrs,$ph,$ds,$pt,$cache_file,$umask,$version) = @_;
+#  my $rv;
+#  if ($rv = &_check4cull($tp,$ttcp,$wait_time,$cull,$scrs,$ph,$ds)) {	# cull every few minutes
+#    my $cache_txt = &write_cache_file($tp,$cache_file,$umask,1);	# write cache file and return cache text
+#    %$tp = ();								# collapse tarpit hash;
+#    my @lines = split("\n",$cache_txt);
+#    &array2_tarpit($tp,\@lines);  # returns true
+#    $tp->{LaBrea} = $version;						# set version number
+#    $tp->{pt} = $pt || 86400;						# default data collection is one day
+#  }
+#  $rv;
+#}
+  
 # input:	file name, mark text
 # returns:	lines of file with ' mark text\n' appended
 #
@@ -516,7 +543,7 @@ sub daemon {
       fcntl(SERVER,F_SETFL,$flags | O_NONBLOCK)	|| die "can't set socket non-blocking";
 
       require POSIX;
-      my %tarpit;
+      my $tarpit = {};
       &POSIX::setsid()	or die "Can't start new session: $!";
       my($LBfh,$version,$kid) = lbd_open($LaBrea,$DEBUG);
       $umask = 033 unless $umask;
@@ -547,9 +574,9 @@ $__PACKAGE__::DOWARN = 1;
       local $SIG{TERM} = sub { $run = 0; };
       local $SIG{PIPE} = 'IGNORE';
 
-      &restore_tarpit(\%tarpit,$cache_file) if -e $cache_file;
-      $tarpit{LaBrea} = $version;	# set version number
-      $tarpit{pt} = $pt || 86400;	# default data collection is one day
+      &restore_tarpit($tarpit,$cache_file) if -e $cache_file;
+      $tarpit->{LaBrea} = $version;	# set version number
+      $tarpit->{pt} = $pt || 86400;	# default data collection is one day
 
 # prepare daemon loop
       my $WNOHANG = &POSIX::WNOHANG; 
@@ -572,12 +599,25 @@ $__PACKAGE__::DOWARN = 1;
 	if ( $ready > 0 ) {
 	  $_ = <$LBfh>;	# blocks, but doesn't matter here
 	  last unless $_;	# Oops, LaBrea must have died, EXIT
-	  &log2_mem(\%tarpit,$_,1,$ph,$ds);
-	  &_check4cull(\%tarpit,\$time2cull,defaults->{auto_cull},$cull,$scrs,$ph,$ds);	# cull every few minutes
+	  &log2_mem($tarpit,$_,1,$ph,$ds);
+#	  &_cullnsquish($tarpit,\$time2cull,defaults->{auto_cull},$cull,$scrs,$ph,$ds,$pt,$cache_file,$umask,$version);
+	  if (&_check4cull($tarpit,\$time2cull,defaults->{auto_cull},$cull,$scrs,$ph,$ds)) {	# cull every few minutes
+		;
+# revert cull operation to previous behavior
+# the code below does not seem to improve memory usage
+#	    my $cache_txt = &write_cache_file($tarpit,$cache_file,$umask,1);	# write cache file and return cache text
+#	    $tarpit = {};							# collapse tarpit hash;
+#	    my @lines = split("\n",$cache_txt);
+#	    &array2_tarpit($tarpit,\@lines);					# returns true
+#	    $tarpit->{LaBrea} = $version;					# set version number
+#	    $tarpit->{pt} = $pt || 86400;					# default data collection is one day
+	  }
 	} 
 	elsif ( $hup ) {
-	  &_check4cull(\%tarpit,\$time2cull,defaults->{min_age},$cull,$scrs,$ph,$ds);	# cull immediate
-	  &write_cache_file(\%tarpit,$cache_file,$umask,1);
+#	  &write_cache_file($tarpit,$cache_file,$umask,1) unless
+#	    &_cullnsquish($tarpit,\$time2cull,defaults->{min_age},$cull,$scrs,$ph,$ds,$pt,$cache_file,$umask,$version);	# cull immediate
+	  &_check4cull($tarpit,\$time2cull,defaults->{auto_cull},$cull,$scrs,$ph,$ds);	# cull immediate
+	  &write_cache_file($tarpit,$cache_file,$umask,1);				# and write cache file
 	  $hup = 0;
 	}
 	elsif ( $kids < $max_kids && ($paddr = accept(CLIENT,SERVER)) ) {	# client has connected
@@ -599,21 +639,21 @@ $__PACKAGE__::DOWARN = 1;
 	      exit 0;			# exit silently if not allowed or can't set linger
 	    }
 	    
-	    &_check4cull(\%tarpit,\$time2cull,defaults->{min_age},$cull,$scrs,$ph,$ds);	# cull immediate
+	    &_check4cull($tarpit,\$time2cull,defaults->{min_age},$cull,$scrs,$ph,$ds);	# cull immediate
 
 	    eval {
 	      my $cache_txt = '';
 	      alarm defaults->{sock_timeout};
 	      my $request = readline *CLIENT;
 	      if ( $request =~ /^standard/ ) {			# full tarpit contents
-		$request = \%tarpit;
+		$request = $tarpit;
 	      }
 	      elsif ( $request =~ /^short/ ) {			# short totals only
 		$request = { 'Tarpit'	=> $VERSION };		# version in format for other end
-		prep_report(\%tarpit,$request);
+		prep_report($tarpit,$request);
 	      }
 	      elsif ( $request =~ /^active/ ) {		# only active threads
-		$request = { 'at' => $tarpit{at} };
+		$request = { 'at' => $tarpit->{at} };
 	      }
 	      elsif ( $request =~ /^config/ ) {		# return config info
 		if ( $config ) {
@@ -681,8 +721,8 @@ $__PACKAGE__::DOWARN = 1;
 	}
       }
       lbd_close($LBfh,$kid);
-      &_check4cull(\%tarpit,\$time2cull,defaults->{min_age},$cull,$scrs,$ph,$ds);	# cull threads
-      &write_cache_file(\%tarpit,$cache_file,$umask,1);
+      &_check4cull($tarpit,\$time2cull,defaults->{min_age},$cull,$scrs,$ph,$ds);	# cull threads
+      &write_cache_file($tarpit,$cache_file,$umask,1);
       foreach $kid ( keys %kids ) {
 	kill 15, $kid;				# kill remaining children
       }
@@ -801,12 +841,6 @@ sub timezone {
         ? '+' : '-';
   $tz .= sprintf("%02d%02d",$hr,$min);
 }
-
-#sub timezone {
-#  my ($now) = $_[0] || time;
-#  require Time::Local;
-#  return sprintf("%+05.0f",(&Time::Local::timegm(localtime($now))- $now)/36);
-#}
 
 =item * $rv = restore_tarpit(\%tarpit,path2cache_file);
 
@@ -1008,7 +1042,7 @@ sub process_log {
   1;
 }
 
-=item * cull_threads(\%tarpit,timeout,scanners,port_intvls,DShield);
+=item * $rv=cull_threads(\%tarpit,timeout,scanners,port_intvls,DShield);
 
 Cull aged threads from memory cache. Default time is 600
 seconds (10 min). On startup, no culls are done for the cull
@@ -1020,6 +1054,8 @@ See B<daemon> description for B<scanners>, B<port_intvls>
 cull_threads updates the time zone of the tarpit cache
 
 appends DShield info to file specified in DShield if present
+
+  returns:	true if threads removed, else false
 
 =cut
 
@@ -1049,9 +1085,11 @@ sub _ex_append {
 #
 # input:	\%tarpit, timeout_seconds, scanners, port_intervals, DShield_file
 #			    default 600
+# returns:	1 if threads removed, else 0
 
 sub cull_threads {
   my ($tp,$timeout,$scrs,$ph,$ds) = @_;
+  my $rv = 0;
   $scrs = ($scrs && $scrs > 0) ? int($scrs) : 0;
   my %scanners;			# trial dead threads
   my $dso;
@@ -1099,6 +1137,7 @@ sub cull_threads {
     } else {
       delete $act->{$src};			# no, delete active thread
     }
+    $rv = 1;
   }
   if ( $dso ) {		# dshield cache open
     close *DS;
@@ -1120,6 +1159,7 @@ sub cull_threads {
       foreach(@dead) {
 	delete $dead->{$_};
       }
+      $rv = 1;
     }
   }
   if ( $ph ) {		# if port stats are present
@@ -1127,17 +1167,22 @@ sub cull_threads {
     my $intvls = $ph * $_;
     my $end = $now - ($now % $_) - $intvls + 1;
     foreach(keys %{$tp->{ph}}) {
-      delete $tp->{ph}->{$_} if $_ < $end;	# drop old port stats
+      if ($_ < $end) {
+	delete $tp->{ph}->{$_};		# drop old port stats
+	$rv = 1;
+      }
     }
-  } else {
-    delete $tp->{ph} if exists $tp->{ph};	# remove unwanted port stats
+  } elsif (exists $tp->{ph}) {
+    delete $tp->{ph};				# remove unwanted port stats
+    $rv = 1;
   }
+  $rv;
 }
 
 =item * $rv = write_cache_file(\%tarpit,path2cache_file,umask,flag);
 
  Write memory cache to file.
- returns true on success, false if file fails to open.
+ returns cache text on success, false if file fails to open.
 
  	umask defaults to 033 if not supplied
 
@@ -1172,7 +1217,7 @@ sub _cache2txt {
 # write new db
 #
 # input:	\%tarpit,$db_file_path_name [umask], fork
-# return:	true or false if failed
+# return:	cache text or false on fail
 #
 sub write_cache_file {
   my ($tp, $dbf, $umask, $flag) = @_;
@@ -1189,48 +1234,8 @@ sub write_cache_file {
   &_cache2txt(\$cache_txt,$tp,$flag);
   print DB $cache_txt;
   close DB;
-  rename ($dbf.'.tmp', $dbf);
+  return (rename ($dbf.'.tmp', $dbf)) ? $cache_txt : undef;
 }
-
-=item * wrt_cache2_handle(\%tarpit,*HANDLE,$fork);
-
-DEPRECATED ! removed
-
-Write memory cache to open handle,
-see B<write_cache_file> above.
-
-=cut
-
-#sub wrt_cache2_handle {
-#  my ($tp,$H,$fork) = @_;
-#  my $cache_txt = '';
-#
-#  if ( ! $fork ) {
-#    &_cache2txt(\$cache_txt,$tp,'static');
-#    print $H $cache_txt;
-#  }
-#  elsif ( ! ($fork = fork) ) {
-#    unless ( fork ) {
-#      &_cache2txt(\$cache_txt,$tp,'daemon');
-#      my $len = length($cache_txt);
-#      my $off = 0;
-#      while ($len) {
-#	my $wrote = syswrite($H,$cache_txt,$len,$off);
-#	if ( ! defined $wrote ) {
-#	  next if $! == EAGAIN;	# would block
-#	}
-#	$off += $wrote;
-#	$len -= $wrote;
-#      }
-#    }
-#    close $H;
-#    exit 0;
-#  }
-#  else {
-#    waitpid($fork,0);
-#  }
-#  1;
-#}
 
 =item * prep_report(\%tarpit,\%hash);
 
@@ -1622,7 +1627,7 @@ See the INSTALL document for complete information
 
 =head1 COPYRIGHT
 
-Copyright 2002, 2003, Michael Robinton & BizSystems
+Copyright 2002, 2003, 2004, Michael Robinton & BizSystems
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or 

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit;
 #
-# 9-29-03, michael@bizsystems.com
+# 9-30-03, michael@bizsystems.com
 #
 BEGIN { $SIG{'__WARN__'} = sub { warn $_[0] if $DOWARN }}
 $__PACKAGE__::DOWARN = 1;
@@ -9,7 +9,7 @@ use strict;
 #use diagnostics;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = do { my @r = (q$Revision: 1.18 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.19 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use Fcntl qw(:DEFAULT :flock);
 use AutoLoader 'AUTOLOAD';

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report;
 #
-# 9-29-03, michael@bizsystems.com
+# 9-30-03, michael@bizsystems.com
 #
 use strict;
 #use diagnostics;
@@ -19,7 +19,7 @@ use vars qw(
 	@std_images
 	);
 
-$VERSION = do { my @r = (q$Revision: 1.08 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.09 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use AutoLoader 'AUTOLOAD';
 
@@ -1217,6 +1217,7 @@ function popwin(query) {
   |. $name .q| = window.open ( "","|. $name .q|",
 "toolbar=no,menubar=no,location=no,scrollbars=yes,status=yes,resizable=yes," +
   "width=|. $width .q|,height=|. $height .q|");
+  if (|. $name .q|.opener == null ) |. $name .q|.opener = self;
   |. $name .q|.document.open();
   |. $name .q|.document.writeln('<html><body bgcolor="#ffffcc"></body></html>');
   |. $name .q|.document.close();

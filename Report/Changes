@@ -1,5 +1,10 @@
 Revision history for Perl extension LaBrea::Tarpit::Report
 
+1.09  Tue Sep 30 09:11:50 PDT 2003
+	added robots meta tag to paged_report
+	add javascript function to Report.pm to close popped window on page unload
+	to prevent multiple sites from trying to use the same named window
+
 1.08  Mon Sep 29 16:24:01 PDT 2003
 	workaround for MSIE windown pop-up problem
 	for compatitbility with SpamCannibal. There are just some 

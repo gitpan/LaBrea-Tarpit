@@ -2,7 +2,7 @@
 #
 # paged_report.plx
 #
-my $version = '1.11';	# 9-5-03, michael@bizsystems.com
+my $version = '1.13';	# 9-30-03, michael@bizsystems.com
 # GPL'd, see Copyright notice in the package README file
 #
 use strict;
@@ -390,6 +390,7 @@ if ( $rpt ) {		# if cache update needed
 ## MAKE STANDARD TOP AND BUTTON BAR
 
   $html = qq|<html><head>
+<META NAME="ROBOTS" CONTENT=NOINDEX, NOFOLLOW">
 <title>LaBrea::Tarpit $page</title>| .
   ($image_cache || '') . q|<style>   
 A.NU {
@@ -401,6 +402,12 @@ A.NU {
 }
 </style>
 <script language=javascript>  
+var pop_whois = null;
+function popclose() {
+  if (pop_whois == null) return;
+  if (pop_whois.closed) return;
+  pop_whois.close();
+}
 var pwait = new Image();
 pwait.src = "|. $look_n_feel->{images} . q|pwait01.gif";
 var ref_url;
@@ -416,7 +423,7 @@ function next_page() {
 }
 </script>
 </head>
-<body bgcolor="#6699cc" text="#ffffcc" vlink="#ffffcc" link="#ffffcc"><center> 
+<body bgcolor="#6699cc" text="#ffffcc" vlink="#ffffcc" link="#ffffcc" onUnLoad="popclose();"><center> 
 <table border=0><tr><td valign=middle>| . $logo_text . qq|</td>
 <td align=center valign=middle width=100%><font face="$look_n_feel->{face}" size=6>LaBrea::Tarpit $buttext{$page}</font></td></tr>
 </table>

@@ -1,5 +1,8 @@
 Revision history for Perl extension LaBrea::Tarpit::Report
 
+1.14  Sun Nov  7 11:34:42 PST 2004
+	updated html list of trojans on paged_report.plx page
+
 1.13  Thu Sep  2 12:14:52 PDT 2004
 	update whois.plx to show PTR lookup for IP's
 

@@ -2,7 +2,7 @@
 #
 # paged_report.plx
 #
-my $version = '1.15';	# 3-27-04, michael@bizsystems.com
+my $version = '1.16';	# 11-7-04, michael@bizsystems.com
 # GPL'd, see Copyright notice in the package README file
 #
 use strict;
@@ -234,11 +234,13 @@ causes the machine at the other end to get "stuck", sometimes  for  a very long 
   <tr><td><font face="| .
 $look_n_feel->{face} . q|" color="| . $look_n_feel->{color} . q|" size=3>
 For a description of port attacks see: <br><a
-href="http://www.robertgraham.com/pubs/firewall-seen.html">www.robertgraham.com/pubs/firewall-seen.html</a>
+href="http://www.doshelp.com/trojanports.htm">Trojan & Worm Ports Information Center</a>
 <br><a
-href="http://www.simovits.com/nyheter9902.html">www.simovits.com/nyheter9902.html</a>
+href="http://www.simovits.com/trojans/trojans.html">www.simovits.com/trojans/trojans.html</a>
 <br><a
-href="http://www.networkice.com/Advice/Exploits/Ports/default.htm">www.networkice.com/Advice/Exploits/Ports/default.htm</a>
+href="http://www.jlathamsite.com/dslr/suspectports.htm">Jerry Latham's Trojan Ports List</a>
+<br><a
+href="http://www.neohapsis.com/neolabs/neo-ports/neo-ports.html">Neohapsis &quot;Entire List&quot;</a>
 </font></td>
   <td>| . $out->{versions} . q|</td></tr>
   </table>

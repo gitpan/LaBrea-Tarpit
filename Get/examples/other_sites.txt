@@ -1,7 +1,7 @@
 
-VERSION = 04030801
+VERSION = 04110701
 
-  Last Updated 3-8-04 michael@bizsystems.com
+  Last Updated 11-7-04 michael@bizsystems.com
 
 This is a list of other sites that are running LaBrea::Tarpit
 It is used to collect stats from the web sites listed in the 
@@ -36,9 +36,9 @@ web_scan.pl in the default mode with AUTO_UPDATE enabled
 
 ######## other sites #######
 
-#http://www.hackbusters.net/cgi-bin/guests.cgi	Tom Liston's site, author of 'labrea' <tliston@premmag.com>
+http://www.hackbusters.net/static/summary.html	Tom Liston's site, author of 'labrea' <tliston@premmag.com>
 http://osiris.etee2k.net/cgi-bin/tarpit/html_report.plx	Ed Truitt <ed.truitt@etee2k.net>
-#http://www.dmrf.net/cgi-bin/guests.cgi		dlinux@dmrf.net
+http://www.dmrf.net/cgi-bin/guests.cgi		dlinux@dmrf.net
 http://www.pettingers.net/cgi-bin/paged_report.cgi Charlie Pettinger <web1@pettingers.net>
 http://pooh.topnz.ac.nz/LaBrea-Tarpit/paged_report.plx Sartorelli, Kevin <Kevin.Sartorelli@openpolytechnic.ac.nz>
-http://tarpit.assinck.info:82/cgi-bin/paged_report.cgi Henrie Assinck <henrie@assinck.info>
+#http://tarpit.assinck.info:82/cgi-bin/paged_report.cgi Henrie Assinck <henrie@assinck.info>

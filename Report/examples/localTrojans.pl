@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report::localTrojans;
 #
-# version 1.21, updated 9-11-04, never complete :-)
+# version 1.22, updated 10-28-04, never complete :-)
 #
 # find a port by number, try tcp then udp
 #
@@ -94,6 +94,7 @@ $trojans = {
   12345	=> 'NetBus',
   23456	=> 'EvilFTP',
   27374	=> 'Sub-7',
+  29992 => 'open spam proxy',
   30100	=> 'NetSphere',
   31789	=> "Hack'aTack",
   31337	=> 'BackOrifice',

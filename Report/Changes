@@ -1,5 +1,9 @@
 Revision history for Perl extension LaBrea::Tarpit::Report
 
+1.06  Tue Aug 12 10:23:24 PDT 2003
+	cosmetic changes to Report::capture_summary
+	cosmetic changes to paged_report.plx
+
 1.05  Wed Aug  6 14:23:44 PDT 2003
 	Report.pm updated to eliminate use of Geek Tools
 	add page 'whois.plx'

@@ -1,5 +1,16 @@
 Revision history for Perl extension LaBrea::Tarpit
 
+1.15  Tue Aug 12 10:06:40 PDT 2003
+	remove case sensitivity from server authentication
+	in Report/examples/whois.plx
+
+	cosmetic changes to Report.pm, paged_report.plx
+	see Report/Changes
+
+1.14  Mon Aug 11 21:21:39 PDT 2003
+	wrapped call to Net::Whois::IP in 'eval' to trap
+	fatal error when whois server can't be reached
+
 1.13  Thu Aug  7 16:55:44 PDT 2003
 	fix scoping error in whois.plx
 

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report;
 #
-# 8-6-03, michael@bizsystems.com
+# 8-12-03, michael@bizsystems.com
 #
 use strict;
 #use diagnostics;
@@ -18,7 +18,7 @@ use vars qw(
 	@std_images
 	);
 
-$VERSION = do { my @r = (q$Revision: 1.05 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.06 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use AutoLoader 'AUTOLOAD';
 
@@ -659,7 +659,7 @@ sub capture_summary {
     my $font = &tdcfg_font($tdcfg);
     $out->{capture_summary} = q|<!-- CAPTURE SUMMARY -->
 <a name="CAPTURE SUMMARY"></a>
-<table cellspacing=1 cellpadding=2 border=2>
+<table cellspacing=1 cellpadding=2 border=2 width=100%>
 <tr><td colspan=2 align=center
 bgcolor="|. $tdcfg->{td_clr} . q
 |"><|. $font . q

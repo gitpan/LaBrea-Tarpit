@@ -210,13 +210,10 @@ elsif ( $page eq 'summary' ) {
   &time2local($out->{now}, $out->{tz}) . q|
 <p>
 These reports show the scans / hack attempts against the
-<br>
 local IP block. The data is provided by the log output from
-<br>
 Tom Liston's LaBrea scanner/worm disruptor. For more 
-<br>
 information on LaBrea see: <a href="http://www.hackbusters.net/">www.hackbusters.net</a>
-<br>
+<p>
 To download these scripts see:<br>
 &nbsp;&nbsp;<a
 href="http://www.bizsystems.net/downloads/">www.bizsystems.net/downloads/</a></font></td>
@@ -227,11 +224,8 @@ $look_n_feel->{face} . q|" color="| . $look_n_feel->{color} . q|" size=3>
 Briefly:
 <br>
 LaBrea is a program that creates a tarpit or, as some have called it a "sticky honeypot". 
-<br>
 LaBrea takes over unused IP addresses on a network and creates "virtual  machines"  that 
-<br>
 answer to connection attempts. LaBrea answers those connection attempts in a way that
-<br>
 causes the machine at the other end to get "stuck", sometimes  for  a very long time.
 <p></font>
   <table cellspacing=0 cellpadding=0 border=0 width=100%>

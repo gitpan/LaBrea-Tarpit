@@ -2,7 +2,7 @@
 #
 # whois.plx
 #
-my $version = '1.01';	# 8-7-03, michael@bizsystems.com
+my $version = '1.04';	# 8-12-03, michael@bizsystems.com
 # GPL'd, see Copyright notice in the package README file
 #
 use strict;
@@ -21,8 +21,6 @@ sub Net::Whois::IP::_do_query {
   return @rv;
 }
 
-#########################################################
-######## READ THIS FILE FOR CONFIGURATION ###############
 #########################################################
 
 $ENV{SCRIPT_NAME} =~ /whois\.([a-zA-Z_-]+)/;
@@ -49,7 +47,7 @@ onClick="self.close();return false;">&gt;&gt;Close Window&lt;&lt;</a>
 <tr><td>|;
 
 if ($IP) {
-  if ($ENV{HTTP_REFERER} !~ /$ENV{SERVER_NAME}/) {
+  if ($ENV{HTTP_REFERER} !~ /$ENV{SERVER_NAME}/i) {
     $html .= qq|
 Due to the excessive load placed on our system, we have disabled the ability
 for third party sites to query the Whois Proxy through the web
@@ -59,12 +57,15 @@ interface. Please enter your request manually.
   }
   else {
     $lastresp = '';
-    whoisip_query($IP);
-    if ($lastresp) {
-    $html .= q|<pre>
+    eval {whoisip_query($IP)};
+    
+    if ($lastresp && ! $@) {
+      $html .= q|<pre>
 |. join('',@$lastresp) . q|
 </pre>
 |;
+    } else {
+     $html .= 'could not connect to whois server, try again later';
     }
   }
 }

@@ -1,5 +1,12 @@
 Revision history for Perl extension LaBrea::Tarpit
 
+1.06  Tue Aug 20 13:29:43 PDT 2002
+	Update t/find_old_threads.t to allow tests to succeed
+	in timezones other than US-Pacific.
+
+	There are no changes to any modules, only the test suite,
+	no update is required for existing installations
+
 1.05  Fri Aug 16 15:36:12 PDT 2002
         changed match string in 'DShield::move2_Q' to
         recognize single digit destination ports

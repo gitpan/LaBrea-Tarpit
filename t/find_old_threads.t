@@ -22,6 +22,8 @@ $loaded = 1;
 print "ok 1\n";
 $test = 2;
 
+my $expect = new LaBrea::Tarpit::tz_test_adj;
+
 sub ok {
   print "ok $test\n";
   ++$test;
@@ -55,9 +57,9 @@ print "found $rv items, not 5\nnot "
 
 ## test 6
 my $expected = 
-'63.227.234.71:4628 -> 80 = 1007241067
-63.87.135.216:3204 -> 80 = 1007241123
-63.222.243.6:2710 -> 80 = 1007241125
+'63.227.234.71:4628 -> 80 = '.$expect->{1007241067}.'
+63.87.135.216:3204 -> 80 = '.$expect->{1007241123}.'
+63.222.243.6:2710 -> 80 = '.$expect->{1007241125}.'
 216.82.114.82:3126 -> 80 = 1007243462
 63.14.244.226:4166 -> 80 = 1007243495
 ';
@@ -82,9 +84,9 @@ print "found $rv items, not 3\nnot "
 
 ## test 8
 $expected = 
-'63.227.234.71:4628 -> 80 = 1007241067
-63.87.135.216:3204 -> 80 = 1007241123
-63.222.243.6:2710 -> 80 = 1007241125
+'63.227.234.71:4628 -> 80 = '.$expect->{1007241067}.'
+63.87.135.216:3204 -> 80 = '.$expect->{1007241123}.'
+63.222.243.6:2710 -> 80 = '.$expect->{1007241125}.'
 ';
 $response = '';
 foreach(sort {$report{$a} <=> $report{$b}} keys %report) {
@@ -98,7 +100,7 @@ ne expected\n$expected\nnot "
 ## test 9
 # time to earliest, should zap all
 %report = ();
-$rv = find_old_threads(\%tarpit,\%report,0,1007241067);
+$rv = find_old_threads(\%tarpit,\%report,0,$expect->{1007241067});
 
 # should have 3 items
 print "found $rv items, not 0\nnot "

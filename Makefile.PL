@@ -10,5 +10,9 @@ WriteMakefile(
    'PM'	   => {	'Tarpit.pm'	=> '$(INST_LIBDIR)/Tarpit.pm',
 			'Codes.pm'	=> '$(INST_LIBDIR)/Codes.pm',
 			'NetIO.pm'	=> '$(INST_LIBDIR)/NetIO.pm'},
+   'PREREQ_PM'	  => {
+		'Net::Whois::IP'	=> 0.35,
+		'Net::Netmask'		=> 1.8,
+   },
    'dist'	  => {COMPRESS		=> 'gzip', SUFFIX => 'gz'}
 );

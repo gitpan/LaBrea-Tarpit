@@ -92,3 +92,4 @@ Util/t/labrea_whoami.t
 Util/t/lockf.t
 Util/t/page_is_current.t
 
+META.yml                                 Module meta-data (added by MakeMaker)

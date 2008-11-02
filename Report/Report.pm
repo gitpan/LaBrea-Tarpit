@@ -1,8 +1,6 @@
 #!/usr/bin/perl
 package LaBrea::Tarpit::Report;
 #
-# 11-11-04, michael@bizsystems.com
-#
 use strict;
 #use diagnostics;
 use vars qw(
@@ -19,7 +17,7 @@ use vars qw(
 	@std_images
 	);
 
-$VERSION = do { my @r = (q$Revision: 1.15 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.16 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use AutoLoader 'AUTOLOAD';
 
@@ -2062,7 +2060,7 @@ sub range_ipv4 {
 
 =head1 COPYRIGHT
 
-Copyright 2002 - 2004, Michael Robinton & BizSystems
+Copyright 2002 - 2008, Michael Robinton & BizSystems
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or 

@@ -1,5 +1,8 @@
 Revision history for Perl extension LaBrea::Tarpit
 
+1.36  Sat Nov  1 17:56:40 PST 2008
+	update prerequisites
+
 1.35  Tue Sep 30 16:47:48 PDT 2008
 	add prerequisites to Makefile.PL
 

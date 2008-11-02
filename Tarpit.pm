@@ -9,7 +9,7 @@ use strict;
 #use diagnostics;
 use vars qw($VERSION @ISA @EXPORT_OK);
 
-$VERSION = do { my @r = (q$Revision: 1.35 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.36 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 use Fcntl qw(:DEFAULT :flock);
 use AutoLoader 'AUTOLOAD';
@@ -1628,7 +1628,7 @@ See the INSTALL document for complete information
 
 =head1 COPYRIGHT
 
-Copyright 2002, 2003, 2004, Michael Robinton & BizSystems
+Copyright 2002 - 2008, Michael Robinton & BizSystems
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or 
